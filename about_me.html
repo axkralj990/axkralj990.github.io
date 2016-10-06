@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="sidebar.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+    <!-- img gallery -->
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://blueimp.github.io/Gallery/css/blueimp-gallery.min.css">
+    <link rel="stylesheet" href="css/bootstrap-image-gallery.min.css">
 </head>
 <body>
 
@@ -29,7 +34,6 @@
             	<ul class="nav navbar-nav">
                 	<li><a href="http://axkralj990.github.io/">Home</a></li>
                     	<li class="active"><a href="about_me.html">About Me</a></li>
-                    	<li><a href="contact.html">Contact</a></li>
                     	<!-- drop down menu -->
                     	<li class="dropdown">
                     		<a href="#" class="dropdown-toggle" data-toggle="dropdown">Projects<span class="caret"></span></a>
@@ -47,16 +51,96 @@
     </nav>
 
 	<div class="container" style="margin-top: 70px;">
-    <div class="row">
-    <div class="col-md-5">
-        <img src="TriglavWinter.jpg" class="img-rounded" width="380">
+
+  <div class="row">
+    <div class="col-md-6">
+        <img src="TriglavWinter.jpg" class="img-rounded" width="100%">
     </div>
-    <div class="col-md-7">Aerospace Engineer, alpinist, pilot, currently pursuing a master's degree in mechanical engineering (mechatronics). Interested in pretty much everything.</div>
-	</div>
+    <div class="col-md-5">
+      <p>Aerospace Engineer, alpinist, pilot, currently pursuing a master's degree in mechanical engineering (mechatronics).
+      Interested in pretty much everything. But on this website I will write mostly about the electronics/programming projects I work on.
+      My main motivation is to help others searching for solutions to their problems just the way many people's websites
+      helped me so far. The major project I am working on right now is to develop an ATmega328p-based flight controller for a quadcopter, from which I
+      want to find a specific topic to write my master thesis about.</p>
+
+      <p>Since pictures tell a thousand words, I added a gallery below about some of the things I do...and pretty much because I wanted to learn how
+        to implement a gallery to a Bootstrap site</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div id="links">
+        <a href="img_about/about_1.jpg" title="Sport Climbing" data-gallery>
+            <img src="img_about/thumbnail_1.jpg" alt="Sport Climbing">
+        </a>
+        <a href="img_about/about_2.jpg" title="Diamond DA-20" data-gallery>
+            <img src="img_about/thumbnail_2.jpg" alt="Diamond DA-20">
+        </a>
+        <a href="img_about/about_3.jpg" title="Julian Alps" data-gallery>
+            <img src="img_about/thumbnail_3.jpg" alt="Julian Alps">
+        </a>
+        <a href="img_about/about_4.jpg" title="Alpinism" data-gallery>
+            <img src="img_about/thumbnail_4.jpg" alt="Alpinism">
+        </a>
+        <a href="img_about/about_5.jpg" title="Diamond DA-20" data-gallery>
+            <img src="img_about/thumbnail_5.jpg" alt="Diamond DA-20">
+        </a>
+        <a href="img_about/about_6.jpg" title="Glider" data-gallery>
+            <img src="img_about/thumbnail_6.jpg" alt="Glider">
+        </a>
+        <a href="img_about/about_7.jpg" title="High Sierras" data-gallery>
+            <img src="img_about/thumbnail_7.jpg" alt="High Sierras">
+        </a>
+        <a href="img_about/about_8.jpg" title="Triglav" data-gallery>
+            <img src="img_about/thumbnail_8.jpg" alt="Triglav">
+        </a>
+      </div>
+    </div>
+</div>
 	<hr>
       <footer>
         <p>&copy; 2016 Company, Inc.</p>
       </footer>
-    </div> <!-- /container -->
+  </div> <!-- /container -->
+
+  <!-- The Bootstrap Image Gallery lightbox, should be a child element of the document body -->
+  <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls" data-use-bootstrap-modal="false">
+      <!-- The container for the modal slides -->
+      <div class="slides"></div>
+      <!-- Controls for the borderless lightbox -->
+      <h3 class="title"></h3>
+      <a class="prev">‹</a>
+      <a class="next">›</a>
+      <a class="close">×</a>
+      <a class="play-pause"></a>
+      <ol class="indicator"></ol>
+      <!-- The modal dialog, which will be used to wrap the lightbox content -->
+      <div class="modal fade">
+          <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <button type="button" class="close" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title"></h4>
+                  </div>
+                  <div class="modal-body next"></div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-default pull-left prev">
+                          <i class="glyphicon glyphicon-chevron-left"></i>
+                          Previous
+                      </button>
+                      <button type="button" class="btn btn-primary next">
+                          Next
+                          <i class="glyphicon glyphicon-chevron-right"></i>
+                      </button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="http://blueimp.github.io/Gallery/js/jquery.blueimp-gallery.min.js"></script>
+  <script src="js/bootstrap-image-gallery.min.js"></script>
 </body>
 </html>
