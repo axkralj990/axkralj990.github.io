@@ -56,7 +56,7 @@
 <p>The controller design was greatly inspired by Joop Brokking's <a href="http://www.brokking.net">Youtube channel</a> and <a href="https://www.youtube.com/user/MacPuffdog/featured">blog</a>. I find his YMFC-3D quadcopter video tutorials of great help and will refer to them often during the project. The design is also based on the YMFC-3D. I have just received most of the components for the quadcopter and will post the parts list with images as soon as I assemble it.</p>
 
 <p>I used many libraries from other Github users. All references to the authors are under each subsection of the readme file where the library is used.</p>
-
+<a name="serialMonitor"></a>
 <p>My starting point was the development of the serial graphing monitor (<a href="#csharp">C#</a>). This is a necessary tool for signal analysis during the development. First I wrote graphing monitor with Python 2.7 and later with C#. Both serial graphing programs are described below.</p>
     </div>
     <div class="col-md-4">
@@ -64,10 +64,10 @@
         <div class="panel-heading">Contents</div>
         <div class="panel-body">
           <ol>
-            <li>Overview</li>
-            <li>Serial Graphing Monitor</li>
-            <li>Servo Control</li>
-            <li>Orientation Sensing</li>
+            <li><a href="quad.html">Overview</a></li>
+            <li><a href="#serialMonitor">Serial Graphing Monitor</a></li>
+            <li><a href="#">Servo Control</a></li>
+            <li><a href="#">Orientation Sensing</a></li>
           </ol>
         </div>
       </div>
@@ -104,8 +104,8 @@ Place the following files in a folder:
 </ul>
 
 <p>To start the program run DataMonitor.py.
-  <a name="csharp"></a>
-  The program is written to receive maximum three separate values at a time from serial. For now it is programmed so all three values need to be packed in a single line, for example, if you want to plot readings from all X, Y, and Z accelerometer axis you should write them to serial like this "AccX AccY AccZ\n". If only one or two values are written to serial, then only one or two data sets will be plotted.
+
+  The program is written to receive maximum three separate <a name="csharp"></a>values at a time from serial. For now it is programmed so all three values need to be packed in a single line, for example, if you want to plot readings from all X, Y, and Z accelerometer axis you should write them to serial like this "AccX AccY AccZ\n". If only one or two values are written to serial, then only one or two data sets will be plotted.
 
   Code was inspired by <a href="https://github.com/mba7/SerialPort-RealTime-Data-Plotter"> MBA7's SerialPort-RealTime-Data-Plotter </a> and
   <a href="http://eli.thegreenplace.net/2009/08/07/a-live-data-monitor-with-python-pyqt-and-pyserial/"> Eli Bendersky work</a>.
