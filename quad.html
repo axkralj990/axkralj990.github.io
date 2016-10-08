@@ -9,7 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 </head>
-<body>
+<body style="padding-top: 70px;">
 
 	<nav class="navbar navbar-inverse navbar-fixed-top">
     	<div class="container">
@@ -45,7 +45,9 @@
     	</div>
     </nav>
 
-	<div class="container" style="margin-top: 70px;">
+	<div class="container">
+    <div class="row">
+      <div class="col-md-8">
     <!--<div class="row">-->
     <p>I started this project in order to learn all the programming skills required to build an ATmega328P-controlled quadcopter. I am starting with the very basics in order to understand everything I make during the project. My main motivation is to find a specific subject related to the flight-controller design of which I can write my masters thesis on. So far I have a few ideas, but I need to invest more time to really find what would be the best subject to work on. I am really interested in different flight control algorithms, inertial measurment filtering methods and guidance and navigation in general.</p>
 
@@ -55,8 +57,22 @@
 
 <p>I used many libraries from other Github users. All references to the authors are under each subsection of the readme file where the library is used.</p>
 
-<p>My starting point was the development of the serial graphing monitor. This is a necessary tool for signal analysis during the development. First I wrote graphing monitor with Python 2.7 and later with C#. Both serial graphing programs are described below.</p>
-
+<p>My starting point was the development of the serial graphing monitor (<a href="#csharp">C#</a>). This is a necessary tool for signal analysis during the development. First I wrote graphing monitor with Python 2.7 and later with C#. Both serial graphing programs are described below.</p>
+    </div>
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">Contents</div>
+        <div class="panel-body">
+          <ol>
+            <li>Overview</li>
+            <li>Serial Graphing Monitor</li>
+            <li>Servo Control</li>
+            <li>Orientation Sensing</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    </div>
 <h2>Serial Graphing Monitor</h2>
 
 <font color="red">Moved to 2 separate repositories, one for the program in Python and another for the program in C#!</font>
@@ -88,7 +104,7 @@ Place the following files in a folder:
 </ul>
 
 <p>To start the program run DataMonitor.py.
-
+  <a name="csharp"></a>
   The program is written to receive maximum three separate values at a time from serial. For now it is programmed so all three values need to be packed in a single line, for example, if you want to plot readings from all X, Y, and Z accelerometer axis you should write them to serial like this "AccX AccY AccZ\n". If only one or two values are written to serial, then only one or two data sets will be plotted.
 
   Code was inspired by <a href="https://github.com/mba7/SerialPort-RealTime-Data-Plotter"> MBA7's SerialPort-RealTime-Data-Plotter </a> and
