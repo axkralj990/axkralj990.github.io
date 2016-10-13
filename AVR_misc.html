@@ -49,29 +49,13 @@
     <div class="row">
       <div class="col-md-8">
     <!--<div class="row">-->
-    <p>In my senior year of aerospace engineering I got really interested into control systems and airplane stability and control. Since then I've had this desire to design my own
-    flight controller. Quadcopters interested me the most, since they are unstable and pretty much useless without a closed-loop controller. After learning how to program the AVR
-  I got the idea to write the flight controller on the ATmega328P chip. This is the same chip Arduino Uno uses. The reason I chose to write the controller diretly on the chip using
-C instead of using an Arduino, was that I wanted to gain as much knowledge as possible in writing firmware for embedded systems and Arduino environment hides much of the
-low-level functions by making the enviroment more user-friendly. I still think that Arduino is a great tool for learning microcontrollers, but gaining a deeper insight into how the
-microcontoller actually work is a necessary step forward for whoever wants to learn and get more from their microcontrollers.</p>
+    <p>I started this project in order to learn all the programming skills required to build an ATmega328P-controlled quadcopter. I am starting with the very basics in order to understand everything I make during the project. My main motivation is to find a specific subject related to the flight-controller design of which I can write my masters thesis on. So far I have a few ideas, but I need to invest more time to really find what would be the best subject to work on. I am really interested in different flight control algorithms, inertial measurment filtering methods and guidance and navigation in general.</p>
 
-<p>When I started programming AVR everything seemed really hard and far from being as user-friendly as Arduino. First thing that scared me was that 660 page long Atmel's user manual
-is something that you need to refer to the whole time you are programming the chip. But after patiently sticking with it for some time it became much more friendly,
-as a matter of fact I feel more comfotable programming AVR than Arduino now. I must say that
- <a href="http://www.littlehacks.org/avr-programming">Elliot Williams' book AVR Programming</a> helped me the most to break that barrier. Having direct access to microcontrollers registers
- gives so much more functionality to the chip that switching back to Arduino makes it harder to work with functions that hide some of the information required for some appilications.</p>
+<p>As a first objective I decided to design the prototype flight controller based on Arduino Uno. With a working prototype flight controller I will design my own board with ATmega328P. For inertial measurements I am using the Invensense MPU6050 IMU.</p>
 
-<p>In this project I will cover many different topics that are required for the quad flight controller. I will cover using the analog to digital converter for scanning the flight battery level,
-, I2C (TWI) communication between the MPU6050 inertial measurement unit and the ATmega328, using the timers for time measurement required for reading and writing RC signals and PID control,
-EEPROM for storing configuration data, USART for configuration and debugging, and much more. As you can see quite many topics need to be covered in order to write the flight
-controller, that's why I made a separate repository where I upload programs where I learned about each one of these modules. <a href="AVR_misc.html">This page</a> goes into detail for each one of the modules.</p>
+<p>The controller design was greatly inspired by Joop Brokking's <a href="http://www.brokking.net">Youtube channel</a> and <a href="https://www.youtube.com/user/MacPuffdog/featured">blog</a>. I find his YMFC-3D quadcopter video tutorials of great help and will refer to them often during the project. The design is also based on the YMFC-3D. I have just received most of the components for the quadcopter and will post the parts list with images as soon as I assemble it.</p>
 
-<p>The controller design was greatly inspired by Joop Brokking's <a href="http://www.brokking.net">Youtube channel</a> and <a href="https://www.youtube.com/user/MacPuffdog/featured">blog</a>.
-I find his YMFC-3D quadcopter video tutorials of great help and will refer to them often during the project. The quad components are also almost the same as on the YMFC-3D.</p>
-
-<p>I have also used many libraries from other Github users. All references to the authors are under each subsection of the project where the specific library is used.</p>
-
+<p>I used many libraries from other Github users. All references to the authors are under each subsection of the readme file where the library is used.</p>
 <a name="serialMonitor"></a>
 <p>My starting point was the development of the serial graphing monitor (<a href="#csharp">C#</a>). This is a necessary tool for signal analysis during the development. First I wrote graphing monitor with Python 2.7 and later with C#. Both serial graphing programs are described below.</p>
     </div>
