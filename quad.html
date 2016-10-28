@@ -68,12 +68,16 @@ EEPROM for storing configuration data, USART for configuration and debugging, an
 controller, that's why I made a separate repository where I upload programs where I learned about each one of these modules. <a href="AVR_misc.html">This page</a> goes into detail for each one of the modules.</p>
 
 <p>The controller design was greatly inspired by Joop Brokking's <a href="http://www.brokking.net">Youtube channel</a> and <a href="https://www.youtube.com/user/MacPuffdog/featured">blog</a>.
-I find his YMFC-3D quadcopter video tutorials of great help and will refer to them often during the project. The quad components are also almost the same as on the YMFC-3D.</p>
+I find his YMFC-3D quadcopter video tutorials of great help and I will refer to them often during the project. The quad components are also almost the same as on the YMFC-3D.</p>
 
 <p>I have also used many libraries from other Github users. All references to the authors are under each subsection of the project where the specific library is used.</p>
 
 <a name="serialMonitor"></a>
-<p>My starting point was the development of the serial graphing monitor (<a href="#csharp">C#</a>). This is a necessary tool for signal analysis during the development. First I wrote graphing monitor with Python 2.7 and later with C#. Both serial graphing programs are described below.</p>
+<p>As soon as I started reading about mesuring the orientation in space with MPU6050 IMU, I realized
+  I needed to make a program that will graph the data sent from the microcontroller via serial port to the computer.
+  For that reason I wrote a <a href="#csharp">serial graphing monitor in C#</a>.
+  At first I wrote the <a href="#python">serial graphing monitor in Python 2.7</a>, but I got the desire to learn C# later, so I wrote another one. Both serial graphing programs are described
+under projects section</p>
     </div>
     <div class="col-md-4">
       <div class="panel panel-default">
@@ -82,59 +86,41 @@ I find his YMFC-3D quadcopter video tutorials of great help and will refer to th
           <ol>
             <li><a href="quad.html">Overview</a></li>
             <li><a href="#serialMonitor">Serial Graphing Monitor</a></li>
-            <li><a href="#">Servo Control</a></li>
+            <li><a href="#">ATmega328 Microcontroller</a></li>
             <li><a href="#">Orientation Sensing</a></li>
+            <li><a href="#">RC control</a></li>
+            <li><a href="#">Quadcopter components</a></li>
+            <li><a href="#">Firmware Architecture</a></li>
+            <li><a href="#">Hardware Design</a></li>
+            <li><a href="#">Controller Setup</a></li></a></li>
+            <li><a href="#">Future Improvements</a></li>
           </ol>
         </div>
       </div>
     </div>
     </div>
+
+    <a name="python"></a>
+
 <h2>Serial Graphing Monitor</h2>
 
-<font color="red">Moved to 2 separate repositories, one for the program in Python and another for the program in C#!</font>
-
-<p><h3>1. Serial Graphing Monitor - Python 2.7</h3> is used to visualize the data sent via serial communication. I use it to analyze the data sent from the MPU6050 IMU connected to Arduino. Current code is written for Python 2.7. If you want to run it on Python 3 you need to change a couple of things (For example: -Py 2: from Queue import Queue -Py 3: from queue import queue).</p>
-
-<div align="center">
-<img src="Monitor.jpg" height="500">
-</div>
-
-<p>&nbsp;</p>
-<p>In order to run the code you need to install the following libraries: </p>
+<p>Descriptions of both serial graphing monitors are on the following pages.</p>
 <ul>
-  <li>PyQtGraph</li>
-  <li>PyQt 4.8+ or PySide</li>
-  <li>NumPy</li>
-  <li>PySerial</li>
+  <li><a href="SGM_cs.html">Serial Graphing Monitor - C#</a></li>
+  <li><a href="SGM_python.html">Serial Graphing Monitor - Python</a></li>
 </ul>
 
-Place the following files in a folder:
+<div class="row" style="padding-bottom: 30px;">
+  <div class="col-md-6">
+  <img src="Monitor.jpg" height="500">
+  </div>
 
-<ul>
-  <li>DataMonitor.py</li>
-  <li>globals.py</li>
-  <li>ComMonitor.py</li>
-  <li>SP_logo.png</li>
-  <li>COMPORT.png</li>
-  <li>BAUDRATE.png</li>
-</ul>
-
-<p>To start the program run DataMonitor.py.
-
-  The program is written to receive maximum three separate <a name="csharp"></a>values at a time from serial. For now it is programmed so all three values need to be packed in a single line, for example, if you want to plot readings from all X, Y, and Z accelerometer axis you should write them to serial like this "AccX AccY AccZ\n". If only one or two values are written to serial, then only one or two data sets will be plotted.
-
-  Code was inspired by <a href="https://github.com/mba7/SerialPort-RealTime-Data-Plotter"> MBA7's SerialPort-RealTime-Data-Plotter </a> and
-  <a href="http://eli.thegreenplace.net/2009/08/07/a-live-data-monitor-with-python-pyqt-and-pyserial/"> Eli Bendersky work</a>.
-  </p>
-<p>
-  <h3>2. Serial Graphing Monitor - C# Windows Forms</h3> was written after I developed the graphing program in Python. I found a desire to improve my knowledge of C# so I used this opportunity  to write a program I needed. </p>
-
-<p>In order to run the program you need to install <a href="http://zedgraph.sourceforge.net/samples.html">ZedGraph</a>.
-  </p>
-<div align="center">
-  <img src="MonitorC.JPG" height="500">
+  <div class="col-md-6">
+    <img src="MonitorC.JPG" height="500">
+  </div>
 </div>
 
+<div class="row">
 <h2>Libraries for ATmega328 and Arduino</h2>
 <p><h3>1. AK_MPU6050_lib for ATmega328: </h3> I am working on a library to use MPU6050 IMU with ATmega328P chip. As of September 19, 2016 the library contains the following functions:</p>
 
@@ -163,18 +149,10 @@ Place the following files in a folder:
 
 <p>I have also bought all the miscallaneous components, such as heat-shrink tubes, various cables, etc. I will be posting the complete parts list soon.</p>
 
-<h2>Servo motor control</h2>
-
-<p>9/20/2016 I started working on controlling servo motors and ESCs with ATmega328P. Quadcopters don't use servo motors, but achive the control solely with the motors, but for the sake of understanding the principals I used a servo motor, since it gave me a visual feedback.</p>
-
-<p>Servo motors turn to the desired position by receiving a 1000-2000us long pulse at a period of about 20ms (50Hz). 1500ms pulse should in fact turn the servo to its center position, while 2000ms and 1000ms pulses to its extremes. At first I thought about using the PWM signal with 50Hz frequency, but I decided to try and write my own, time-measuring, function similar to what Arduino's function micros() does. With that I could controll the servo in a similar way what Joop Brokking does in <a href="https://www.youtube.com/watch?v=fqEkVcqxtU8">this video.</a>. This method eliminates the need for an additional interrupt routine, which might mess things up like shown in the video. At first I tried to supply the servo with 1000-2000us pulses every 4ms (250kHz), because I had no idea about how servos worke. Soon enough I have realized that this was not the best for the motor, becaus it made strange noises. This in fact would work with fast ESC designed for quadcopter, since some of them can be controlled with frequencies as high as 400KHz. I have also tried controlling the servo with a much slower frequency - 10Hz, just to see how it behaved. With such a slow frequency, the accumulated voltage in the servo was very low and correspondingly the servo turne slowly.</p>
-
-<p>Because the flight control program already uses an interrupt routine that reads RC transmitter signals, I am not sure what would be the effect of adding another interrupt routine called every 4ms (for updating the ESCs). As mentioned previously, the method Joop Brokking used on his YMFC-3D avoids adding thi interrupt. I will have to conduct more reaserch and testing to find the best solution on how to control the ESCs. If anyone knows more about this subject, I would be more than happy if they could provide additional information.</p>
-
 <p>Author: alex.kraljic@gmail.com</p>
 
 <p>There is still a lot to fix, add, and improve, so any suggestions and corrections are welcome!</p>
-
+</div>
 <!--</div>-->
 	<hr>
       <footer>
