@@ -6,9 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <link rel="stylesheet" href="sidebar.css">
+    <link rel="stylesheet" href="AK_stylesheet.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Orbitron">
 </head>
 <body style="padding-top: 70px;">
 
@@ -52,20 +54,20 @@
     <!--<div class="row">-->
     <p>In my senior year of aerospace engineering I got really interested into control systems and airplane stability and control. Since then I've had the desire to design my own
     flight controller. I found quadcopters the most interesting, since they are unstable and pretty much useless without a closed-loop controller. After learning how to program AVRs,
-  I got the idea to write the flight controller on the ATmega328P chip. This is the same chip Arduino Uno uses. The reason I chose to write the controller diretly on the chip with
+  I got this idea to write the flight controller on the ATmega328P chip. This is the same chip Arduino Uno uses. The reason I decided to write the controller diretly on the chip with
 C instead of using an Arduino, was that I wanted to gain as much knowledge as possible in writing firmware for embedded systems and Arduino environment hides much of the
-low-level functions by making the enviroment more user-friendly. I still think that Arduino is a great tool for learning microcontrollers, but working directly with ATmega328 helps to understand
+low-level functions by making the enviroment more user-friendly. I still think that Arduino is a great tool for learning microcontrollers, but working directly with the ATmega328 chip helps to understand
  what's under the hood.</p>
 
-<p>When I started programming AVRs, everything seemed really complex and far from being as user-friendly as Arduino. First thing that scared me was that 660 page long Atmel's user manual. Since it
+<p>When I started programming AVRs, everything seemed really complex and far from being as user-friendly as the Arduino environment. First thing that scared me was that 660 page long Atmel's user manual. Since it
   is something that you need to refer to the whole time you are programming the chip. After patiently sticking with it for some time it became much friendlier.
-As a matter of fact I feel more comfotable programming AVRs than Arduino. I must state that
+As a matter of fact, now I feel more comfotable programming AVRs than Arduino. I have to mention that
  <a href="http://www.littlehacks.org/avr-programming">Elliot Williams' book AVR Programming</a> helped me the most to break the ice.</p>
 
-<p>In this project I will cover many different topics that are required for the quad flight controller. I will cover using the analog to digital converter for scanning the flight battery level,
+<p>In this project I will cover many different topics that are required for the quad flight controller. I will cover how to use the analog to digital converter for scanning the flight battery level,
 , I2C (TWI) communication protocol between the MPU6050 inertial measurement unit and the ATmega328P, using timers for time measurement required for reading and writing RC signals and PID control,
 EEPROM for storing configuration data, USART for configuration and debugging, and much more. As you can see quite many topics need to be covered in order to write the flight
-controller, that's why I made a separate repository where I upload programs where I worked on each one of those modules. <a href="AVR_misc.html">This page</a> goes into detail for each one of the modules.</p>
+controller, that's why I made a separate repository for the programs where I worked on each one of those modules. <a href="AVR_misc.html">This page</a> goes into detail for each one of the modules.</p>
 
 <p>The controller design was greatly inspired by Joop Brokking's <a href="http://www.brokking.net">Youtube channel</a> and <a href="https://www.youtube.com/user/MacPuffdog/featured">blog</a>.
 I find his YMFC-3D quadcopter video tutorials of great help and I will refer to them often during the project. The quad components are also almost the same as on the YMFC-3D.</p>
@@ -73,10 +75,10 @@ I find his YMFC-3D quadcopter video tutorials of great help and I will refer to 
 <p>I have also used many libraries from other Github users. All references to the authors are under each subsection of the project where the specific library is used.</p>
 
 
-<p>As soon as I started reading about mesuring the orientation in space with MPU6050 IMU, I realized
+<p>As soon as I started learning about measuring the orientation in space with the MPU6050 IMU, I realized
   I needed to make a program that will graph the data sent from the microcontroller via serial port to the computer.
   For that reason I wrote a <a href="#csharp">serial graphing monitor in C#</a>.
-  At first<a name="versions"></a> I wrote the <a href="#python">serial graphing monitor in Python 2.7</a>, but I got the desire to learn C# later, so I wrote another one. Both serial graphing programs are described
+  At first<a name="versions"></a> I wrote the <a href="#python">serial graphing monitor in Python 2.7</a>, but later I got the desire to learn C#, so I wrote another one. Both serial graphing programs are described
 under projects section</p>
     </div>
     <div class="col-md-4">
@@ -104,19 +106,19 @@ under projects section</p>
 <h2>Firmware Versions</h2>
 
 <h3>Version 1.0</h3>
-<p>As of October 31, I am working on the very first version of the firmware, so
+<p>As of April 18, 2017, I am working on the very first version of the firmware, so
 I will just call it version 1.0.</p>
 
 <p>For the version 1.0 I will use the Arduino Uno board and Adafruit SD
-card shiled configured with the MPU6050 IMU, receiver inputs and ESC outputs.
+card shield configured with the MPU6050 IMU, receiver inputs and ESC outputs.
 Of course I will program the ATmega328P on the Arduino with plain C using
  Atmel Studio and not Arduino's C/C++ dialect. The main reson I am using the Arduino
- for the first version is that I still have to figure out the best way to convert
- the voltage from roughly 12V from the flight battery to 5V that the chip needs.
+ for the first version is that I still need to figure out the best way to convert
+ the flight battery voltage of about 12V to 5V that the chip needs.
  Another reason for using this hardware configuration is the 16MHz crystal
  oscillator built on the Arduino Uno. Because the flight control requires precise
- time measurements (reading and generating RC controll pulses and PID control),
- the internal RC oscillator of the ATmega328P lacks precission. I realized that
+ time measurements (measurement/generation of RC controll pulses and PID control),
+ the internal RC oscillator of the ATmega328P lacks that precission. I realized that
  when I compared pulse lengths from RC receiver with the same code running on
  the Arduino and on the standalone ATmega328P chip. The maximum pulse length
  the Arduino read was exactly 2000ms long, while the standalone chip read
@@ -166,7 +168,7 @@ only approximatelly 1800ms.</p>
 
 <h3>2. USART library for ATmega328: </h3>
 
-<p>This is a slightly modified version of a USART library written by Elliot Williams for his <a href="http://www.littlehacks.org/avr-programming">AVR Programming book</a>. I must note that I have learned most of my AVR programming knowledge from this book and I highly recommend it.</p>
+<p>This is a slightly modified version of a USART library written by Elliot Williams for his <a href="http://www.littlehacks.org/avr-programming">AVR Programming book</a>.</p>
 
 <h2>Quadcopter Components</h2>
 

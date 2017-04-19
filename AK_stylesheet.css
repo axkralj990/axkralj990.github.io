@@ -2,3 +2,9 @@
 AK_hdg {
 	background-color: #CCC;
 }
+
+#AK-brand {
+  font-family: Orbitron !important;
+  font-weight: bold;
+  font-size: 35px;
+}
