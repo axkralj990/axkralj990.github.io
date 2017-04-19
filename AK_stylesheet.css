@@ -8,3 +8,24 @@ AK_hdg {
   font-weight: bold;
   font-size: 35px;
 }
+
+.social-link {
+  color: #ff7028;
+  font-size: 50px !important;
+	padding-bottom: 15px;
+	padding-right: 5px;
+}
+.social-link:hover {
+  color: #ff9966;
+}
+
+.navbar-nav {
+	font-family: Roboto Condensed !important;
+	font-size: 17px;
+}
+
+footer {
+	padding-top: 50px;
+	text-align: center;
+	font-weight: bold;
+}

@@ -11,6 +11,7 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Orbitron">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto Condensed">
 </head>
 <body>
 
@@ -82,7 +83,10 @@ Place the following files in a folder:
 
 <p>To start the program run DataMonitor.py.
 
-  The program is written to receive maximum three separate values at a time from serial. For now it is programmed so all three values need to be packed in a single line, for example, if you want to plot readings from all X, Y, and Z accelerometer axis you should write them to serial like this "AccX AccY AccZ\n". If only one or two values are written to serial, then only one or two data sets will be plotted.
+  The program is written to receive a maximum of three separate values at a time from serial.
+   For now it is programmed in a way that all three values need to be packed in a single line, for example,
+    if you want to plot readings from X, Y, and Z accelerometer axis you should write them to serial like this "AccX AccY AccZ\n".
+     If only one or two values are written to serial, then only one or two data sets will be plotted.
 
   Code was inspired by <a href="https://github.com/mba7/SerialPort-RealTime-Data-Plotter"> MBA7's SerialPort-RealTime-Data-Plotter </a> and
   <a href="http://eli.thegreenplace.net/2009/08/07/a-live-data-monitor-with-python-pyqt-and-pyserial/"> Eli Bendersky work</a>.
