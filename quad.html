@@ -55,32 +55,26 @@
     <!--<div class="row">-->
     <p>In my senior year of aerospace engineering I got really interested into control systems and airplane stability and control. Since then I've had the desire to design my own
     flight controller. I found quadcopters the most interesting, since they are unstable and pretty much useless without a closed-loop controller. After learning how to program AVRs,
-  I got this idea to write the flight controller on the ATmega328P chip. This is the same chip Arduino Uno uses. The reason I decided to write the controller diretly on the chip with
-C instead of using an Arduino, was that I wanted to gain as much knowledge as possible in writing firmware for embedded systems and Arduino environment hides much of the
-low-level functions by making the enviroment more user-friendly. I still think that Arduino is a great tool for learning microcontrollers, but working directly with the ATmega328 chip helps to understand
+  I got this idea to write the flight controller on the stand-alone ATmega328P chip. This is the same chip Arduino Uno uses. The reason I decided to write the controller diretly on the chip with
+C instead of using an Arduino, was that I wanted to gain as much knowledge as possible in writing firmware for embedded systems and Arduino environment hides some of the
+low-level functionality by making the enviroment more user-friendly. I still think that Arduino is a great tool for learning microcontrollers, but working directly with the ATmega328 chip leads to better understanding of
  what's under the hood.</p>
 
-<p>When I started programming AVRs, everything seemed really complex and far from being as user-friendly as the Arduino environment. First thing that scared me was that 660 page long Atmel's user manual. Since it
-  is something that you need to refer to the whole time you are programming the chip. After patiently sticking with it for some time it became much friendlier.
-As a matter of fact, now I feel more comfotable programming AVRs than Arduino. I have to mention that
+<p>When I started programming AVRs, everything seemed really complex and far from being as user-friendly as the Arduino environment. First thing that scared me was that 600+ pages long Atmel's user manual, because that
+  is something that you need to refer to the whole time you are writing the code for the chip. After patiently sticking with it for some time it became much friendlier.
+As a matter of fact, now I feel much more comfotable programming AVRs than Arduino. I need to mention that
  <a href="http://www.littlehacks.org/avr-programming">Elliot Williams' book AVR Programming</a> helped me the most to break the ice.</p>
 
 <p>In this project I will cover many different topics that are required for the quad flight controller. I will cover how to use the analog to digital converter for scanning the flight battery level,
 , I2C (TWI) communication protocol between the MPU6050 inertial measurement unit and the ATmega328P, using timers for time measurement required for reading and writing RC signals and PID control,
-EEPROM for storing configuration data, USART for configuration and debugging, and much more. As you can see quite many topics need to be covered in order to write the flight
-controller, that's why I made a separate repository for the programs where I worked on each one of those modules. <a href="AVR_misc.html">This page</a> goes into detail for each one of the modules.</p>
+EEPROM for storing configuration data, USART for configuration and debugging, and much more. <!-- As you can see quite many topics need to be covered in order to write the flight
+controller, that's why I made a separate repository for the programs where I worked on each one of those modules. <a href="AVR_misc.html">This page</a> goes into detail for each one of the modules.--></p>
 
 <p>The controller design was greatly inspired by Joop Brokking's <a href="http://www.brokking.net">Youtube channel</a> and <a href="https://www.youtube.com/user/MacPuffdog/featured">blog</a>.
-I find his YMFC-3D quadcopter video tutorials of great help and I will refer to them often during the project. The quad components are also almost the same as on the YMFC-3D.</p>
+His YMFC-3D quadcopter video tutorials helped me a lot and I will refer to them often during the project. The quad components are also almost the same as on his YMFC-3D.</p>
 
 <p>I have also used many libraries from other Github users. All references to the authors are under each subsection of the project where the specific library is used.</p>
 
-
-<p>As soon as I started learning about measuring the orientation in space with the MPU6050 IMU, I realized
-  I needed to make a program that will graph the data sent from the microcontroller via serial port to the computer.
-  For that reason I wrote a <a href="#csharp">serial graphing monitor in C#</a>.
-  At first<a name="versions"></a> I wrote the <a href="#python">serial graphing monitor in Python 2.7</a>, but later I got the desire to learn C#, so I wrote another one. Both serial graphing programs are described
-under projects section</p>
     </div>
     <div class="col-md-4">
       <div class="panel panel-default">
@@ -104,6 +98,7 @@ under projects section</p>
 
     <a name="python"></a>
 
+<!--
 <h2>Firmware Versions</h2>
 
 <h3>Version 1.0</h3>
@@ -124,15 +119,24 @@ Of course I will program the ATmega328P on the Arduino with plain C using
  the Arduino and on the standalone ATmega328P chip. The maximum pulse length
  the Arduino read was exactly 2000ms long, while the standalone chip read
 only approximatelly 1800ms.</p>
+-->
 
 <a name="serialMonitor"></a>
 
+<!--
 <p>I plan on designing the flight controller board myself for later versions,
  but I will have to learn some more about voltage regulators and I will have to
  install the 16MHz crystall oscillator for better time measurements and pulse
  generation.</p>
+-->
 
 <h2>Serial Graphing Monitor</h2>
+
+<p>As soon as I started learning about measuring the orientation in space with the MPU6050 IMU, I realized
+  I had to make a program that will graph the data sent from the microcontroller to the computer via serial port.
+  For that reason I wrote a <a href="#csharp">serial graphing monitor in C#</a>.
+  At first<a name="versions"></a> I wrote the <a href="#python">serial graphing monitor in Python 2.7</a>, but later I got the desire to learn C#, so I wrote another one. Both serial graphing programs are described
+under projects section</p>
 
 <p>Descriptions of both serial graphing monitors are on the following pages.</p>
 <ul>
@@ -151,6 +155,41 @@ only approximatelly 1800ms.</p>
 </div>
 
 <div class="row">
+
+
+<h2>Orientation Sensing</h3>
+<p>As I mentioned earlier, the quadcopter is an unstable system without a close-loop control, for this reason it needs some form feedback information
+about its orientation or rotation rates. Two of most commonly used modes for quadcopter stabilization are: </p>
+
+<ul>
+  <li><b>Rate mode (manual mode)</b></li>
+  <p>In rate mode the quadcoper relies on the output from the three-axis gyroscope that measures angular rates about all of the three axis (X - Roll, Y - Pitch, Z - Yaw). When all the controls for roll, pitch
+  and yaw are in neutral position, the PID control aims to maintain all the angular rates equal to zero (set-point). When the operator desires to move the quadcopter in any of the three principal axis, he/she
+  chages the setpoint to a non-zero value by moving the control stick on the RC transmitter. In order to bring the quadcopter back to level position, the operator has to manually control the quadcopter back
+  to level orientation.</p>
+  <li><b>Self-level mode (horizont mode).</b></li>
+  <p>The self-level mode is much more beginner-friendli than the rate mode, because when all the orientation controls are in neutral positions, the PID control maintains all the angles about
+  the principal axis equal to zero. This means that if the controls are in neutral positions, the quadcopter will remain level. Self-level control is achieved by reading the angular rates from the
+gyroscope and acceleration from the accelerometer. By combining both readings with a fusion filter (explained later), the orientation about the principal axis can be calculated. The PID controler then
+aims to maintain the orientation angles equal to zero.</p>
+</ul>
+
+<p> For my first flight controller I decided to go with the rate-mode, even though I am using the MPU6050 IMU, which contains both, an accelerometer and a gyroscope. Once I get everything working
+  well, I will consider implementing the self-level mode.</p>
+
+
+  <p><h3>1. Quadcopter Body Axis</h3></p>
+  <p>Figure below shows the definition aircraft's body axis used in aicraft dynamics. I will refer to this coordinate system throught the entire project.</p>
+
+  <img src="axis.jpg" height="300">
+
+  <p><h3>2. MPU6050 IMU</h3></p>
+  <p> MPU6050 is a 6-dof (degree of freedom) inertial measurement unit (IMU), which means that it's a board that contains a 3-axis accelerometer and a 3-axis gyroscope, hence the 6-dof. There are also 9-dof IMUs that
+    contain a 3-axis magnetometer as well (MPU-9060). The board is probably the most commonly used IMU for DIY projects
+    (Arduino, Raspberry Pi,...). A microcontroller and the IMU can communicate via I2C or SPI communication protocols. I decided to use the I2C to communicate with it.</p>
+
+    <img src="MPU6050.jpg" height="300">
+
 <h2>Libraries for ATmega328 and Arduino</h2>
 <p><h3>1. AK_MPU6050_lib for ATmega328: </h3> I am working on a library to use MPU6050 IMU with ATmega328P chip. As of September 19, 2016 the library contains the following functions:</p>
 
