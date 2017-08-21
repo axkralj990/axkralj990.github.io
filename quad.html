@@ -174,23 +174,36 @@ gyroscope and acceleration from the accelerometer. By combining both readings wi
 aims to maintain the orientation angles equal to zero.</p>
 </ul>
 
-<p> For my first flight controller I decided to go with the rate-mode, even though I am using the MPU6050 IMU, which contains both, an accelerometer and a gyroscope. Once I get everything working
+<p> For my first flight controller I decided to go with the <b>rate-mode</b>, even though I am using the MPU6050 IMU, which contains both, an accelerometer and a gyroscope. Once I get everything working
   well, I will consider implementing the self-level mode.</p>
 
 
   <p><h3>1. Quadcopter Body Axis</h3></p>
   <p>Figure below shows the definition aircraft's body axis used in aicraft dynamics. I will refer to this coordinate system throught the entire project.</p>
 
-  <img src="Axis.jpg" height="300">
+  <img src="Axis_rates.jpg" height="300">
+
+  <p>The angular rates of the aircraft will be denoted as P for the angular rate around the X axis, Q around the Y axis and R around the Z axis. I will use &deg;/s for the units for the angular rates.</p>
 
   <p><h3>2. MPU6050 IMU</h3></p>
   <p> MPU6050 is a 6-dof (degree of freedom) inertial measurement unit (IMU), which means that it's a board that contains a 3-axis accelerometer and a 3-axis gyroscope, hence the 6-dof. There are also 9-dof IMUs that
     contain a 3-axis magnetometer as well (MPU-9060). The board is probably the most commonly used IMU for DIY projects
-    (Arduino, Raspberry Pi,...). A microcontroller and the IMU can communicate via I2C or SPI communication protocols. I decided to use the I2C to communicate with it.</p>
-
+    (Arduino, Raspberry Pi,...).</p>
+  
     <img src="mpu6050.JPG" height="300">
 
+  <p>Below are some relevant specifications for the MPU6050. More can be found in the <a href="https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf">datasheet</a></p>.
+
+    <img src="GyroData.JPG" width="500">
+
+    <p>From the data shown above it is important to note the value of the FS_SEL register, since that determines the sensitivity and the range of the gyro, the information we need if we want to interpret the data read from the registers as angular rate. Gyroscope ADC word length is 16 bit long, which means that the reading will be store in two separate 8-bit registers, from which we will have to read it with I2C communication protocol that I will briefly explain next.</p>
+    <p><a href="https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Register-Map1.pdf">MPU6050's register map</a> is another required document for establishing the communication with the chip.</p>
   <p><h3>3. I2C Communication</h3></p>
+  <p>...Breif explanation of I2C protocol...</p>
+  <p>I always like to test and visualize things that I work with, so I couldn't help myself and had to buy a cheap oscilloscope (Hantek 6022BE, as recommended by <a href="https://www.youtube.com/watch?v=ibYA229U08w&t=283s">Joop Brokking</a>) in order to see what is going on inside the wires when the devices talk to each other.</p>
+
+  <img src="i2c_Data_notations.png" height="500">
+  <img src="i2c_Data_ard_notations.png" height="500">
 
 
 <h2>Libraries for ATmega328 and Arduino</h2>
