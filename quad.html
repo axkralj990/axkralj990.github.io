@@ -12,6 +12,11 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Orbitron">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto Condensed">
+    <style>
+    td {
+        font-size: 12px;
+    }
+    </style>
 </head>
 <body style="padding-top: 70px;">
 
@@ -189,12 +194,79 @@ aims to maintain the orientation angles equal to zero.</p>
   <p> MPU6050 is a 6-dof (degree of freedom) inertial measurement unit (IMU), which means that it's a board that contains a 3-axis accelerometer and a 3-axis gyroscope, hence the 6-dof. There are also 9-dof IMUs that
     contain a 3-axis magnetometer as well (MPU-9060). The board is probably the most commonly used IMU for DIY projects
     (Arduino, Raspberry Pi,...).</p>
-  
+
     <img src="mpu6050.JPG" height="300">
 
   <p>Below are some relevant specifications for the MPU6050. More can be found in the <a href="https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf">datasheet</a></p>.
 
-    <img src="GyroData.JPG" width="500">
+    <!--<img src="GyroData.JPG" width="500">-->
+    <table class="table">
+	<thead>
+	    <tr>
+	        <th>Parameter</th>
+		<th>Conditions</th>
+		<th>Typ</th>
+		<th>Units</th>
+	    </tr>
+	</thead>
+	<tbody>
+	    <tr>
+	        <td>Full-Scale Range</td>
+		<td>FS_SEL=0</td>
+		<td>&plusmn; 250</td>
+		<td>&deg;/s</td>
+	    </tr>
+	    <tr>
+	        <td></td>
+		<td>FS_SEL=1</th>
+		<td>&plusmn; 500</th>
+		<td>&deg;/s</th>
+	    </tr>
+	    <tr>
+	        <td></th>
+		<td>FS_SEL=2</td>
+		<td>&plusmn; 1000</td>
+		<td>&deg;/s</td>
+	    </tr>
+	    <tr>
+	        <td></td>
+		<td>FS_SEL=3</td>
+		<td>&plusmn; 2000</td>
+		<td>&deg;/s</td>
+	    </tr>
+	    <tr>
+	        <td>Gyroscope ADC Word Length</td>
+		<td></td>
+		<td>16</td>
+		<td>bit</td>
+	    </tr>
+	    <tr>
+	        <td>Sensitivity Scale Factor</td>
+		<td>FS_SEL=0</td>
+		<td>&plusmn; 131</td>
+		<td>LSB/(&deg;/s)</td>
+	    </tr>
+	    <tr>
+	        <td></td>
+		<td>FS_SEL=1</td>
+		<td>&plusmn; 65.5</td>
+		<td>LSB/(&deg;/s)</td>
+	    </tr>
+	    <tr>
+	        <td></td>
+		<td>FS_SEL=2</td>
+		<td>&plusmn; 32.8</td>
+		<td>LSB/(&deg;/s)</td>
+	    </tr>
+	    <tr>
+	        <td></td>
+		<td>FS_SEL=3</td>
+		<td>&plusmn; 16.4</td>
+		<td>LSB/(&deg;/s)</td>
+	    </tr>
+
+	</tbody>
+    </table>
 
     <p>From the data shown above it is important to note the value of the FS_SEL register, since that determines the sensitivity and the range of the gyro, the information we need if we want to interpret the data read from the registers as angular rate. Gyroscope ADC word length is 16 bit long, which means that the reading will be store in two separate 8-bit registers, from which we will have to read it with I2C communication protocol that I will briefly explain next.</p>
     <p><a href="https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Register-Map1.pdf">MPU6050's register map</a> is another required document for establishing the communication with the chip.</p>
