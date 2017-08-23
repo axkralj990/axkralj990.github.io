@@ -183,7 +183,7 @@ aims to maintain the orientation angles equal to zero.</p>
 
   <img src="Axis_rates.jpg" height="300">
 
-  <p>The angular rates of the aircraft will be denoted as P for the angular rate around the X axis, Q around the Y axis and R around the Z axis. I will use &deg;/s for the units for the angular rates.</p>
+  <p>The angular rates of the aircraft will be denoted as P for the angular rate around the X axis, Q around the Y axis and R around the Z axis. I will use &deg;/s for the units for the angular rates. This will be the values we will get from the gyroscope on the MPU6050 IMU.</p>
 
   <p><h3>2. MPU6050 IMU</h3></p>
   <p> MPU6050 is a 6-dof (degree of freedom) inertial measurement unit (IMU), which means that it's a board that contains a 3-axis accelerometer and a 3-axis gyroscope, hence the 6-dof. There are also 9-dof IMUs that
@@ -199,7 +199,7 @@ aims to maintain the orientation angles equal to zero.</p>
     <p>From the data shown above it is important to note the value of the FS_SEL register, since that determines the sensitivity and the range of the gyro, the information we need if we want to interpret the data read from the registers as angular rate. Gyroscope ADC word length is 16 bit long, which means that the reading will be store in two separate 8-bit registers, from which we will have to read it with I2C communication protocol that I will briefly explain next.</p>
     <p><a href="https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Register-Map1.pdf">MPU6050's register map</a> is another required document for establishing the communication with the chip.</p>
   <p><h3>3. I2C Communication</h3></p>
-  <p>...Breif explanation of I2C protocol...</p>
+  <p></p>
   <p>I always like to test and visualize things that I work with, so I couldn't help myself and had to buy a cheap oscilloscope (Hantek 6022BE, as recommended by <a href="https://www.youtube.com/watch?v=ibYA229U08w&t=283s">Joop Brokking</a>) in order to see what is going on inside the wires when the devices talk to each other.</p>
 
   <img src="i2c_Data_notations.png" height="500">
