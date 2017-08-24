@@ -72,8 +72,7 @@ As a matter of fact, now I feel much more comfotable programming AVRs than Ardui
 
 <p>In this project I will cover many different topics that are required for the quad flight controller. I will cover how to use the analog to digital converter for scanning the flight battery level,
 , I2C (TWI) communication protocol between the MPU6050 inertial measurement unit and the ATmega328P, using timers for time measurement required for reading and writing RC signals and PID control,
-EEPROM for storing configuration data, USART for configuration and debugging, and much more. <!-- As you can see quite many topics need to be covered in order to write the flight
-controller, that's why I made a separate repository for the programs where I worked on each one of those modules. <a href="AVR_misc.html">This page</a> goes into detail for each one of the modules.--></p>
+EEPROM for storing configuration data, USART for configuration and debugging, and much more.</p>
 
 <p>The controller design was greatly inspired by Joop Brokking's <a href="http://www.brokking.net">Youtube channel</a> and <a href="https://www.youtube.com/user/MacPuffdog/featured">blog</a>.
 His YMFC-3D quadcopter video tutorials helped me a lot and I will refer to them often during the project. The quad components are also almost the same as on his YMFC-3D.</p>
@@ -87,12 +86,10 @@ His YMFC-3D quadcopter video tutorials helped me a lot and I will refer to them 
         <div class="panel-body">
           <ol>
             <li><a href="quad.html">Overview</a></li>
-            <li><a href="#versions">Firmware Versions</a></li>
             <li><a href="#serialMonitor">Serial Graphing Monitor</a></li>
             <li><a href="#">Orientation Sensing</a></li>
             <li><a href="#">RC control</a></li>
             <li><a href="#">Quadcopter components</a></li>
-            <li><a href="#">Firmware</a></li>
             <li><a href="#">Flight Controller Board</a></li>
             <li><a href="#">Future Improvements</a></li>
           </ol>
@@ -164,7 +161,13 @@ under projects section</p>
 
 <h2>Orientation Sensing</h3>
 <p>As I mentioned earlier, the quadcopter is an unstable system without a close-loop control, for this reason it needs some form feedback information
-about its orientation or rotation rates. Two of most commonly used modes for quadcopter stabilization are: </p>
+about its orientation or rotation rates. The unstable system means that the output of the system becomes unbounded for a bounded input, in other words this means that for any input, ex. if you want to roll the quad left, the output, the roll angle, would go to infinity (in theory!), so the quad would just go out of controll. A closed-loop control system is a specificaly designed system to control the output to maintain a desired value. Below is a schematic of a general closed loop system.</p>
+
+ <img src="closedLoop.png" height="300">
+
+<p style="padding-top: 50px">Hopefully the diagram above helps to understand why is the system called close-loop. The loop is closed when the process signal, the output of the system is fed back and compared to a reference signal, the desired output value. To make things more clear its best to use an everyday example of a closed-loop system, such as the cruise controll in a car. Cruise controll is used so the car maintains a desired speed set by the driver. So the reference signal in a cruise control system is the desired speed, the system is the car in the environvemnt in which it is driving (road conditions, inclination, air pressure, wind, temperature, etc.), the sensor is the speedometer. If the driver turns the cruise controll on while driving at let's say 78 kmh and set the desired speed to 90 kmh, which is the reference signal, the speedometer will measure the process signal, speed, as 78 kmh at that instant, when this is fed back, it is subtracted from the reference signal, which makes the error equal to 12 kmh. The error is then processed by a controller, which is specifically designed for its task and it outputs a control signal for the car to produce more power. When the car's speed approaches 90 kmh, the error approaches zero. But even when the speed is 90 kmh, the controller has to counteract the disturbances, such as the wind, road inclination, etc. The main difference between a controller for a quadcopter and a car is that the car is a stable system, without the closed-loop controller, the car would eventually stop (or hit something while slowing down), the quadcopter would completely lose control. Unfortnatelly I cannot go into to many details about the control system, since that usually takes at least a one semester university engineering course (in my opinion more, to actually understand the subject).</p>
+
+<p>In a car where the cruise controll controlls the speed, in quadcopters the controller has to control pitch, roll and yaw angles or the rates at which these angles are changing, for this reason the two of most commonly used modes for quadcopter stabilization are:</p>
 
 <ul>
   <li><b>Rate mode (manual mode)</b></li>
@@ -173,15 +176,16 @@ about its orientation or rotation rates. Two of most commonly used modes for qua
   chages the setpoint to a non-zero value by moving the control stick on the RC transmitter. In order to bring the quadcopter back to level position, the operator has to manually control the quadcopter back
   to level orientation.</p>
   <li><b>Self-level mode (horizont mode).</b></li>
-  <p>The self-level mode is much more beginner-friendli than the rate mode, because when all the orientation controls are in neutral positions, the PID control maintains all the angles about
+  <p>The self-level mode is much more beginner-friendly than the rate mode, because when all the orientation controls are in neutral positions, the PID control maintains all the angles about
   the principal axis equal to zero. This means that if the controls are in neutral positions, the quadcopter will remain level. Self-level control is achieved by reading the angular rates from the
 gyroscope and acceleration from the accelerometer. By combining both readings with a fusion filter (explained later), the orientation about the principal axis can be calculated. The PID controler then
 aims to maintain the orientation angles equal to zero.</p>
 </ul>
 
 <p> For my first flight controller I decided to go with the <b>rate-mode</b>, even though I am using the MPU6050 IMU, which contains both, an accelerometer and a gyroscope. Once I get everything working
-  well, I will consider implementing the self-level mode.</p>
+  well, I will consider implementing the self-level mode. Below is a simple diagram of the rate-mode control system for the quadcopter.</p>
 
+<img src="quad_cs.png" height="500">
 
   <p><h3>1. Quadcopter Body Axis</h3></p>
   <p>Figure below shows the definition aircraft's body axis used in aicraft dynamics. I will refer to this coordinate system throught the entire project.</p>
