@@ -7,7 +7,8 @@ AK_hdg {
   font-family: Orbitron !important;
   font-weight: bold;
   font-size: 35px;
-  padding-top: auto;
+  vertical-align: middle !important;
+  padding-top: 19px;
 }
 
 .social-link {
