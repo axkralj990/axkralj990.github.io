@@ -116,11 +116,11 @@ under projects section</p>
 
 <div class="row" style="padding-bottom: 30px;">
   <div class="col-md-6">
-  <img src="Monitor.jpg" height="500">
+  <img src="images/Monitor.jpg" height="500">
   </div>
 
   <div class="col-md-6">
-    <img src="MonitorC.JPG" height="500">
+    <img src="images/MonitorC.JPG" height="500">
   </div>
 </div>
 
@@ -131,7 +131,7 @@ under projects section</p>
 <p>As I mentioned earlier, the quadcopter is an unstable system without a close-loop control, for this reason it needs some form feedback information
 about its orientation or rotation rates. The unstable system means that the output of the system becomes unbounded for a bounded input, in other words this means that for any input, ex. if you want to roll the quad left, the output, the roll angle, would go to infinity (in theory!), so the quad would just go out of controll. A closed-loop control system is a specificaly designed system to control the output to maintain a desired value. Below is a schematic of a general closed loop system.</p>
 
- <img src="closedLoop.png" height="300">
+ <img src="images/closedLoop.png" height="300">
 
 <p style="padding-top: 50px">Hopefully the diagram above helps to understand why is the system called close-loop. The loop is closed when the process signal, the output of the system is fed back and compared to a reference signal, the desired output value. To make things more clear its best to use an everyday example of a closed-loop system, such as the cruise controll in a car. Cruise controll is used so the car maintains a desired speed set by the driver. So the reference signal in a cruise control system is the desired speed, the system is the car in the environvemnt in which it is driving (road conditions, inclination, air pressure, wind, temperature, etc.), the sensor is the speedometer. If the driver turns the cruise controll on while driving at let's say 78 kmh and set the desired speed to 90 kmh, which is the reference signal, the speedometer will measure the process signal, speed, as 78 kmh at that instant, when this is fed back, it is subtracted from the reference signal, which makes the error equal to 12 kmh. The error is then processed by a controller, which is specifically designed for its task and it outputs a control signal for the car to produce more power. When the car's speed approaches 90 kmh, the error approaches zero. But even when the speed is 90 kmh, the controller has to counteract the disturbances, such as the wind, road inclination, etc. The main difference between a controller for a quadcopter and a car is that the car is a stable system, without the closed-loop controller, the car would eventually stop (or hit something while slowing down), the quadcopter would completely lose control. Unfortnatelly I cannot go into to many details about the control system, since that usually takes at least a one semester university engineering course (in my opinion more, to actually understand the subject).</p>
 
@@ -153,12 +153,12 @@ aims to maintain the orientation angles equal to zero.</p>
 <p> For my first flight controller I decided to go with the <b>rate-mode</b>, even though I am using the MPU6050 IMU, which contains both, an accelerometer and a gyroscope. Once I get everything working
   well, I will consider implementing the self-level mode. Below is a simple diagram of the rate-mode control system for the quadcopter.</p>
 
-<img src="quad_cs.png" height="500">
+<img src="images/quad_cs.png" height="500">
 
   <p><h3>1. Quadcopter Body Axis</h3></p>
   <p>Figure below shows the definition aircraft's body axis used in aicraft dynamics. I will refer to this coordinate system throught the entire project.</p>
 
-  <img src="Axis_rates.jpg" height="300">
+  <img src="images/Axis_rates.jpg" height="300">
 
   <p>The angular rates of the aircraft will be denoted as P for the angular rate around the X axis, Q around the Y axis and R around the Z axis. I will use &deg;/s for the units for the angular rates. This will be the values we will get from the gyroscope on the MPU6050 IMU.</p>
 
@@ -167,7 +167,7 @@ aims to maintain the orientation angles equal to zero.</p>
     contain a 3-axis magnetometer as well (MPU-9060). The board is probably the most commonly used IMU for DIY projects
     (Arduino, Raspberry Pi,...).</p>
 
-    <img src="mpu6050.JPG" height="300">
+    <img src="images/mpu6050.JPG" height="300">
 
   <p>Below are some relevant specifications for the MPU6050. More can be found in the <a href="https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf">datasheet</a></p>.
 
@@ -246,8 +246,8 @@ aims to maintain the orientation angles equal to zero.</p>
   <p></p>
   <p>I always like to test and visualize things that I work with, so I couldn't help myself and had to buy a cheap oscilloscope (Hantek 6022BE, as recommended by <a href="https://www.youtube.com/watch?v=ibYA229U08w&t=283s">Joop Brokking</a>) in order to see what is going on inside the wires when the devices talk to each other.</p>
 
-  <img src="i2c_Data_notations.png" height="500">
-  <img src="i2c_Data_ard_notations.png" height="500">
+  <img src="images/i2c_Data_notations.png" height="500">
+  <img src="images/i2c_Data_ard_notations.png" height="500">
 
 
 <h2>Libraries for ATmega328 and Arduino</h2>
