@@ -1,4 +1,9 @@
 @charset "utf-8";
+
+html {
+  overflow-y: scroll;
+}
+
 AK_hdg {
 	background-color: #CCC;
 }
@@ -7,7 +12,7 @@ AK_hdg {
   font-family: Orbitron !important;
   font-size: 35px;
   vertical-align: middle !important;
-  padding-top: 19px;
+  //padding-top: 19px;
 }
 
 .social-link {
