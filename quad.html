@@ -28,7 +28,7 @@
     <!--<div class="row">-->
     <p>In my senior year of aerospace engineering I got really interested into control systems and airplane stability and control. Since then I've had the desire to design my own
     flight controller. I found quadcopters the most interesting, since they are unstable and pretty much useless without a closed-loop controller. After learning how to program AVRs,
-  I got this idea to write the flight controller on the stand-alone ATmega328P chip. This is the same chip Arduino Uno uses. The reason I decided to write the controller diretly on the chip with
+  I got this idea to write the flight controller on the stand-alone ATmega328P chip. This is the same chip Arduino Uno uses. The reason I decided to write the controller directly on the chip with
 C instead of using an Arduino, was that I wanted to gain as much knowledge as possible in writing firmware for embedded systems and Arduino environment hides some of the
 low-level functionality by making the enviroment more user-friendly. I still think that Arduino is a great tool for learning microcontrollers, but working directly with the ATmega328 chip leads to better understanding of
  what's under the hood.</p>
@@ -36,13 +36,13 @@ low-level functionality by making the enviroment more user-friendly. I still thi
 <p>When I started programming AVRs, everything seemed really complex and far from being as user-friendly as the Arduino environment. First thing that scared me was that 600+ pages long Atmel's user manual, because that
   is something that you need to refer to the whole time you are writing the code for the chip. After patiently sticking with it for some time it became much friendlier.
 As a matter of fact, now I feel much more comfotable programming AVRs than Arduino. I need to mention that
- <a href="http://www.littlehacks.org/avr-programming">Elliot Williams' book AVR Programming</a> helped me the most to break the ice.</p>
+ <a target="_blank" href="http://www.littlehacks.org/avr-programming">Elliot Williams' book AVR Programming</a> helped me the most to break the ice.</p>
 
 <p>In this project I will cover many different topics that are required for the quad flight controller. I will cover how to use the analog to digital converter for scanning the flight battery level,
 , I2C (TWI) communication protocol between the MPU6050 inertial measurement unit and the ATmega328P, using timers for time measurement required for reading and writing RC signals and PID control,
 EEPROM for storing configuration data, USART for configuration and debugging, and much more.</p>
 
-<p>The controller design was greatly inspired by Joop Brokking's <a href="http://www.brokking.net">Youtube channel</a> and <a href="https://www.youtube.com/user/MacPuffdog/featured">blog</a>.
+<p>The controller design was greatly inspired by Joop Brokking's <a target="_blank" href="http://www.brokking.net">Youtube channel</a> and <a target="_blank" href="https://www.youtube.com/user/MacPuffdog/featured">blog</a>.
 His YMFC-3D quadcopter video tutorials helped me a lot and I will refer to them often during the project. The quad components are also almost the same as on his YMFC-3D.</p>
 
 <p>I have also used many libraries from other Github users. All references to the authors are under each subsection of the project where the specific library is used.</p>
@@ -104,14 +104,14 @@ only approximatelly 1800ms.</p>
 
 <p>As soon as I started learning about measuring the orientation in space with the MPU6050 IMU, I realized
   I had to make a program that will graph the data sent from the microcontroller to the computer via serial port.
-  For that reason I wrote a <a href="#csharp">serial graphing monitor in C#</a>.
-  At first<a name="versions"></a> I wrote the <a href="#python">serial graphing monitor in Python 2.7</a>, but later I got the desire to learn C#, so I wrote another one. Both serial graphing programs are described
+  For that reason I wrote a <a target="_blank" href="#csharp">serial graphing monitor in C#</a>.
+  At first<a name="versions"></a> I wrote the <a target="_blank" href="#python">serial graphing monitor in Python 2.7</a>, but later I got the desire to learn C#, so I wrote another one. Both serial graphing programs are described
 under projects section</p>
 
 <p>Descriptions of both serial graphing monitors are on the following pages.</p>
 <ul>
-  <li><a href="SGM_cs.html">Serial Graphing Monitor - C#</a></li>
-  <li><a href="SGM_python.html">Serial Graphing Monitor - Python</a></li>
+  <li><a target="_blank" href="SGM_cs.html">Serial Graphing Monitor - C#</a></li>
+  <li><a target="_blank" href="SGM_python.html">Serial Graphing Monitor - Python</a></li>
 </ul>
 
 <div class="row" style="padding-bottom: 30px;">
@@ -169,7 +169,7 @@ aims to maintain the orientation angles equal to zero.</p>
 
     <img src="images/mpu6050.JPG" height="300">
 
-  <p>Below are some relevant specifications for the MPU6050. More can be found in the <a href="https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf">datasheet</a></p>.
+  <p>Below are some relevant specifications for the MPU6050. More can be found in the <a target="_blank" href="https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf">datasheet</a></p>.
 
     <!--<img src="GyroData.JPG" width="500">-->
     <table class="table">
@@ -241,13 +241,13 @@ aims to maintain the orientation angles equal to zero.</p>
     </table>
 
     <p>From the data shown above it is important to note the value of the FS_SEL register, since that determines the sensitivity and the range of the gyro, the information we need if we want to interpret the data read from the registers as angular rate. Gyroscope ADC word length is 16 bit long, which means that the reading will be store in two separate 8-bit registers, from which we will have to read it with I2C communication protocol that I will briefly explain next.</p>
-    <p><a href="https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Register-Map1.pdf">MPU6050's register map</a> is another required document for establishing the communication with the chip.</p>
+    <p><a target="_blank" href="https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Register-Map1.pdf">MPU6050's register map</a> is another required document for establishing the communication with the chip.</p>
   <p><h3>3. I2C Communication</h3></p>
   <p></p>
   <p>I always like to test and visualize things that I work with, so I couldn't help myself and had to buy a cheap oscilloscope (Hantek 6022BE, as recommended by <a href="https://www.youtube.com/watch?v=ibYA229U08w&t=283s">Joop Brokking</a>) in order to see what is going on inside the wires when the devices talk to each other.</p>
 
-  <img src="images/i2c_Data_notations.png" height="500">
-  <img src="images/i2c_Data_ard_notations.png" height="500">
+  <a target="_blank" href="images/i2c_Data_notations.png"><img src="images/i2c_Data_notations.png" height="500"></a>
+  <a target="_blank" href="images/i2c_Data_ard_notations.png"><img src="images/i2c_Data_ard_notations.png" height="500"></a>
 
 
 <h2>Libraries for ATmega328 and Arduino</h2>
@@ -264,7 +264,7 @@ aims to maintain the orientation angles equal to zero.</p>
   <li>MPU6050_set_clockSource()</li>
 </ul>
 
-<p>The AK_MPU6050_lib uses <a href="https://github.com/g4lvanix/I2C-master-lib">I2c-master-lib by g4lvanix</a> for I2C communication with the MPU6050 chip.</p>
+<p>The AK_MPU6050_lib uses <a target="_blank" href="https://github.com/g4lvanix/I2C-master-lib">I2c-master-lib by g4lvanix</a> for I2C communication with the MPU6050 chip.</p>
 
 <h3>2. USART library for ATmega328: </h3>
 
@@ -274,7 +274,7 @@ aims to maintain the orientation angles equal to zero.</p>
 
 <p>I have finally received all the components for the quad. I bought almost everything from <a href="http://www.brokking.net/ymfc-al_main.html">Brokking's list</a> for his YMFC-3D AL quadcopter. Links to each part at dx.com are on his website. The only thing I bought in my local RC store was the LiPo charger and the batttery, since LiPo batteries could not be shipped to EU from dx.net.</p>
 
-<p>First problem I ran into was that I had no idea on how to work with LiPo batteries, since they be quite dangerous if not handled properly. <a href="http://www.tjinguytech.com/charging-how-tos">This link</a> taught me all I needed for now.</p>
+<p>First problem I ran into was that I had no idea on how to work with LiPo batteries, since they be quite dangerous if not handled properly. <a target="_blank" href="http://www.tjinguytech.com/charging-how-tos">This link</a> taught me all I needed for now.</p>
 
 <p>I have also bought all the miscallaneous components, such as heat-shrink tubes, various cables, etc. I will be posting the complete parts list soon.</p>
 

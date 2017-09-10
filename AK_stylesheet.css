@@ -12,7 +12,7 @@ AK_hdg {
   font-family: Orbitron !important;
   font-size: 35px;
   vertical-align: middle !important;
-  //padding-top: 19px;
+  line-height: 30px;
 }
 
 .social-link {
@@ -28,6 +28,7 @@ AK_hdg {
 .navbar-nav {
 	font-family: Roboto Condensed !important;
 	font-size: 17px;
+	font-weight: normal !important;
 }
 
 footer {
