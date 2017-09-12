@@ -11,6 +11,7 @@ AK_hdg {
 #AK-brand {
   font-size: 35px;
   font-family: Orbitron !important;
+  font-weight: bold;
   /*
   vertical-align: middle !important;
   line-height: 30px;
