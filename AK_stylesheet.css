@@ -9,10 +9,10 @@ AK_hdg {
 }
 
 #AK-brand {
-  font-family: Orbitron !important;
+  //font-family: Orbitron !important;
   font-size: 35px;
-  vertical-align: middle !important;
-  line-height: 30px;
+  //vertical-align: middle !important;
+  //line-height: 30px;
 }
 
 .social-link {
