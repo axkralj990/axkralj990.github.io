@@ -39,6 +39,7 @@ x.innerHTML =
                             '<ul class="dropdown-menu">'+
                                 '<li><a href="I2C.html">I2C Exaplained</a></li>'+
                                 '<li><a href="MPU6050.html">MPU6050</a></li>'+
+				'<li><a href="MPU6050.html">Measuring Time on AVR</a></li>'+
                                 '<li><a href="MRI.html">MRI Imaging</a></li>'+
                                 '<li><a href="MRI.html">EEG</a></li>'+
                             '</ul>'+
