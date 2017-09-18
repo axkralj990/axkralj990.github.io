@@ -39,6 +39,30 @@ p, a, h1, h2, h3 {
   font-family: Open Sans !important;
 }
 
+.jumbotron {
+  height: 330px;
+  color: white;
+  text-shadow: #444 1px 1px 1px;
+  background:transparent;
+}
+
+.bg {
+  position: fixed;
+  width: 100%;
+  height: 330px;
+  top:50px;
+  left:0px;
+  z-index: -1;
+}
+
+#bg-1 {
+  background: url('images/FIGHTER.jpg') no-repeat center center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
 footer {
 	padding-top: 50px;
 	text-align: center;

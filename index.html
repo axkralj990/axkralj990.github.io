@@ -5,11 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-    <link rel="stylesheet" href="sidebar.css">
+
     <link rel="stylesheet" href="AK_stylesheet.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Orbitron">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto Condensed">
@@ -18,36 +17,49 @@
 
 	<div id="myNav" class="home"></div>
 
-<!--
-    <div class="jumbotron" style="margin-top: 50px; background-image: url('http://res.cloudinary.com/fs-uni/image/upload/v1478878828/about_8_kuo1nt.jpg'); background-size: cover; align-items: center;">
-    	<div  class="container" style="color: white; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000">
-          <h1>About Me</h1>
-          <p>Aerospace Engineer</p>
-          <p><a class="btn btn-primary btn-lg" href="about_me.html" role="button">View Project</a></p>
-      	</div>
-    </div>
--->
+<div class="container" style="padding-top: 40px">
+<div class="bg" id="bg-1">
+    <div class="jumbotron"></div>
+</div>
+</div>
 
-   <div class="container" style="padding-top: 50px">
+   <div class="container" style="padding-top: 340px">
       <!-- Example row of columns -->
       <div class="row">
         <div class="col-md-4">
-          <h2>Serial Graphing Monitor C#</h2>
-          <p>I wrote this program to help me visualize the signals I work with during my project. At first I have developed the monitor in Python 2.7,
-          but later I decided to learn C# and this turned out to be an interesting project to work on.</p>
-          <p><a class="btn btn-default" href="SGM_cs.html" role="button">View Project &raquo;</a></p>
+          <h2>I2C</h2>
+          <p>A short tutorial on how to establish an I2C communication between an ATmega328P microcontroller and a slave device, such as a sensor board. I provided examples for AVRs in C and in the Arduino dialect.</p>
+          <p><a class="btn btn-default" href="I2C.html" role="button">View Project &raquo;</a></p>
         </div>
         <div class="col-md-4">
-          <h2>Serial Graphing Monitor Python</h2>
-          <p>My first serial graphing program, I wrote in Python since that was the language I used at the university.
-          This project was also my first time that I had to work with multi threading.</p>
-          <p><a class="btn btn-default" href="SGM_python.html" role="button">View Project &raquo;</a></p>
+          <h2>Serial Graphing Monitor</h2>
+          <p>I wrote this program to help me visualize the signals I work with during my projects. I wrote the serial graphing program in Python 2.7 and
+          C#.</p>
+          <p><a class="btn btn-default" href="SGM.html" role="button">View Project &raquo;</a></p>
        </div>
         <div class="col-md-4">
-          <h2>Smaller AVR Projects</h2>
-          <p>Some smaller projects I work on for learning AVR programming. Some of the projects are just test programs for algorithms I use for the quadcopter flight controller.
-          Topics covered vary from using timers, ADC, I2C, etc.</p>
-          <p><a class="btn btn-default" href="AVR_misc.html" role="button">View Project &raquo;</a></p>
+          <h2>Quadcopter Project</h2>
+          <p>This is the largest project I have been working on lately, so the page will be constantly updated.</p>
+          <p><a class="btn btn-default" href="quad.html" role="button">View Project &raquo;</a></p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <h2>MPU6050</h2>
+          <p>Here I provide a brief explanation of the IMU and a tutorial on how to configure and use the IMU on an AVR and on the Arduino.</p>
+          <p><a class="btn btn-default" href="MPU6050.html" role="button">View Project &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+          <h2>Measuring Time on AVRs</h2>
+          <p>As soon as I transition from Arduino to AVR I started to miss the millis() function, so here I explain how to implement it on the AVR.</p>
+          <p><a class="btn btn-default" href="tictoc.html" role="button">View Project &raquo;</a></p>
+       </div>
+        <div class="col-md-4">
+          <h2>MRI</h2>
+          <p>In order for me to learn how an MRI works I thought it would be the best to try to learn it up to a point that I can 
+          explain it to someone else.</p>
+          <p><a class="btn btn-default" href="MRI.html" role="button">View Project &raquo;</a></p>
         </div>
       </div>
 
@@ -58,5 +70,6 @@
       </footer>
     </div> <!-- /container -->
     <script src="myNavbar.js"></script>
+    <script src="paralax.js"></script>
 </body>
 </html>
