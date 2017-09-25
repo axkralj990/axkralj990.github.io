@@ -18,7 +18,55 @@
 
 	<div class="container" style="margin-top: 70px;">
 
-    <h3>I2C</h3>
+    <h1>I2C</h1>
+
+<h3>Introduction</h3>
+<p>I2C (pronounced I-two-C) is a very popular communication protocol in the word of microcontrollers. It's advantage is that
+it allows communication between multiple devices by using only two wires, SDA (Serial Data Line) and SCL (Serial Clock Line). The protocol
+was invented by Phillips Semiconductors in 1982. The first time I encountered I2C was when I wanted to measure the orientation in space with my Arduino.
+For that purpose I bought an MPU6050 inertial measurement unit (IMU) that required I2C to talk to it. At first I was really confused since I had no 
+experience with digital communication protocols except some basic understanding of USART by using Arduinos Serial library. The first time I looked at an example code for reading accelerometer and gyroscope data from the MPU6050, it scared the hell out of me with ~100 lines of code consisting of nothing but a bunch of hexadecimal register addresses. This is when I realized that in order to do something more than just sending a "Hello World!" string via serial line requires some more dedication. That's why I encourage anyone who is motivated to build something using microcontroller to stick with it whenever you encounter something that looks intimidatingly challenging at first, because before you realize it, it will click and this is one of the best rewards you can get while learning new things or coding, besides, of course, finiding that bug that took a couple of years of your life. In this tutorial I will try to do my best to explain the principle of the I2C protocol and show an example in C language for the ATmega328P microcontroller and one for the Arduino. For both examples I will use the MPU6050 IMU.</p>
+
+<h3>Basics</h3>
+<p>I2C protocol is a multi-master, multi-slave, which means that a system of nodes (devices) can have multiple master devices and multiple slave devices. To understand what this means you need to understand what each one of them does:</p>
+<ul>
+	<li>Master Device: Generates the clock and initializes the communication with a slave device</li>
+	<li>Slave Device: Receives the clock and responds when addressed by the master.</li>
+</ul>
+<p>The microcontrollers such as the ATmega328 can be configured to act as a master or a slave device, whereas simpler sensor devices usually support only the slave mode.</p>
+
+<h4>Clock</h4>
+
+<p>As mentioned earlier, the I2C requires two wires to communicate with the devices. The <em>Serial clock line</em> or <em>SCL</em> is where the master sends the generated clock signal that the slave devices receives. With this said, a shared clock between the master and slave devices makes the I2C protocol a <em>synchronous protocol</em>, in contrast of USART, which is <em>asynchrounous</em>, because the two devices talking to each other need to know in advance the rate at which they will transfer bits (baudrate). The other wire is the <em>serial data line</em> or <em>SDA</em> where the data, the payload, is transmitted between the devices.</p>
+
+<p>The clock that the master generates defines the rate at which the data is transfered. I2C supports various clock speeds, but simple devices commonly used for simple microcontroller projects support the original 100 kHz mode or the 400 kHz fast-mode. The faster supported mode for I2C is 5 GHz Ultra Fast-mode.</p>
+
+<h4>Addressing</h4>
+
+<p>The number of devices that I2C can communicate with are defined by the number of bits each device's address consists of. I2C devices can have 7 or 10 bit addresses. In theory, the largest number that a 7-bit address can be is (1111111)<sub>2</sub> or (127)<sub>10</sub>, which would define the maximum number of devices connected to the same bus. Since there are some address that are reserved and cannot be used for addressing, the largest number is (112)<sub>10</sub>. (I am using the parentheses with a subscript to indicate the base of the number, so 2 for binary and 10 for decimal, later I will use 16 for hexadecimal.) The maximum number of devices is limited on the physical layer by the total bus capacitance.</p>
+
+<h3>Protocol</h3>
+
+<p>To explain how the protocol works I will use an example of three human slaves, where each one monitors a different sensor and reports the reading to the one of the two masters when they request it. Image below shows the three slaves and two masters.</p>
+
+<img src="images/master_slave.png" class="report-figure">
+
+<p>Slave A monitors a humidity sensor, slave B a thermometer and slave C a barometer. Masters 1 or 2 can ask the slaves for a reading whenever they want by addressing a desired slave and requesting the sensor reading. In smaller microcontroller projects, you will most likely use a single master, but in order to explain the full functionality of I2C, I'm using two masters.</p> 
+
+<blockquote><small>One thing to keep in mind when using multiple masters is that they cannot communicate with each other, but they have to listen to each other before requesting data from the slaves, so they don't request it at the same time, since the slaves would not understand what masters want if they request something at the same time. This also applies to the regular conversation between people. If you talked to an audiance, everyone who listened would understand what you are saying (assuming you talked loud and clear in a language everyone understood). But if everyone in the audience tried to tell you something at the same time, you would just hear some jibber jabber. If two or more master devices would transmit a packet to slaves at the same time, the packets would <em>collide</em>, so in case of a multi-master I2C setup, some sort of packet collision aviodance mechanism has to be implemented. As I wrote before, this only applies if you have a project consisting of multiple master devices, otherwise do not worry about this now.</small></blockquote>
+
+<h3>Communication Principle</h3>
+<ul>
+	<li>I2C clock speeds</li>
+	<li>Connections (common ground, open drain -> pull-ups)</li>
+	<li>"offtopic" create a registers tutorial</li>
+	<li>Start/Stop address read/write ACK/NACK registers (explain those briefly -> something that I learned from programing AVRs) repeated start</li>
+	<li>Write to MPU6050 example</li>
+	<li>Read from MPU6050 (repeated start) exampe</li>
+	<li>Outline for establishing the communication (regardless of the micro controller)</li>
+	<li>Some basic physics (time constant)</li>
+</ul>
+
 
 <p>Author: alex.kraljic@gmail.com</p>
 
