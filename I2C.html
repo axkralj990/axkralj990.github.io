@@ -22,18 +22,166 @@
 
 <h3>Introduction</h3>
 <p>I2C (pronounced I-two-C) is a very popular communication protocol in the word of microcontrollers. It's advantage is that
-it allows communication between multiple devices by using only two wires, SDA (Serial Data Line) and SCL (Serial Clock Line). The protocol
-was invented by Phillips Semiconductors in 1982. The first time I encountered I2C was when I wanted to measure the orientation in space with my Arduino.
-For that purpose I bought an MPU6050 inertial measurement unit (IMU) that required I2C to talk to it. At first I was really confused since I had no 
-experience with digital communication protocols except some basic understanding of USART by using Arduinos Serial library. The first time I looked at an example code for reading accelerometer and gyroscope data from the MPU6050, it scared the hell out of me with ~100 lines of code consisting of nothing but a bunch of hexadecimal register addresses. This is when I realized that in order to do something more than just sending a "Hello World!" string via serial line requires some more dedication. That's why I encourage anyone who is motivated to build something using microcontroller to stick with it whenever you encounter something that looks intimidatingly challenging at first, because before you realize it, it will click and this is one of the best rewards you can get while learning new things or coding, besides, of course, finiding that bug that took a couple of years of your life. In this tutorial I will try to do my best to explain the principle of the I2C protocol and show an example in C language for the ATmega328P microcontroller and one for the Arduino. For both examples I will use the MPU6050 IMU.</p>
+it allows communication between multiple devices by using only two wires, SDA (Serial Data Line) and SCL (Serial Clock Line) connected to all devices at together, unlike USART or SPI where every pair of devices needs its own set of wires. The protocol was invented by Phillips Semiconductors in 1982. The first time I encountered I2C was when I wanted to measure the orientation in space with my Arduino. For that purpose I bought an MPU6050 inertial measurement unit (IMU) that required I2C to talk to it. At first I was really confused since I had no 
+experience with digital communication protocols except some basic understanding of USART by using Arduinos Serial library. The first time I looked at an example code for reading accelerometer and gyroscope data from the MPU6050, it scared the hell out of me with ~100 lines of code consisting of nothing but a bunch of hexadecimal register addresses. This is when I realized that in order to learn something more than just sending a "Hello World!" string via serial line I have to dedicate more time. That's why I encourage anyone who is motivated to build something using microcontroller to stick with it whenever you encounter something that looks intimidatingly challenging at first, because before you realize it, it will click (which in my opinion is one of the best feelings when learning). In this tutorial I will try to do my best to explain the principle of the I2C protocol and show an I2C example using an Arduino, ATMega328P and Raspberry Pi, but not all at once, first I will use just an Arduino Uno. For all examples I will use the MPU6050 IMU, but you may use whichever device you want.</p>
 
-<h3>Basics</h3>
+<h3>Principle</h3>
+
+<p>To explain how the protocol works I will use an example of three human slaves, where each one monitors a different sensor and reports the reading to the one of the two masters when they request it. Image below shows the three slaves and two masters.</p>
+
+<img src="images/master_slave.png" class="report-figure" style="padding-bottom: 20px;">
+
+<p>Slave A monitors a humidity sensor, slave B a thermometer and slave C a barometer. Masters 1 or 2 can ask the slaves for a reading whenever they want by addressing a desired slave and requesting the sensor reading. In smaller microcontroller projects, you will most likely use a single master, but in order to explain the full functionality of I2C, I'm using two masters.</p> 
+
+<p>For the beginning let's forget about the clock signal and focus only on the protocol of how the data is transmitted. Since there are three different slaves, each one of them has a name (an address) by which the master is going to get his/her attention. To keep it simple I will just name them A, B an C, as depicted on the image. They agreed in advance that to get the data from the slaves, a master has to first ring a bell, get the desired slave's attention by calling the slave's name, then tell the slave in what units the data should be reported. After that master gets a pencil and paper to write down the measurement received from the slave and calls the name of the slave again, so the slave reports the measurement. Once the measurement is written down, the master rings the bell twice to mark the end of the conversation. To make sure that a certain slave is present (better be) and that the instruction was heard, the receiver <strong>acknowledges</strong> that the instruction was heard (let's assume that the masters have some respect for the slaves, so both acknowledge by saying "yes sir"). If the master is happy with the received message, he/she tells the slave "got it", to indicate that this was all that was needed, I will call this as "not acknowledged" (sounds weird, but you will see later why I call it like that). For an example, if the master wants to receive the temeperature in Fahrenheit from the slave B, the conversation would go as following:</p>
+
+<table class="table" style="width: 50%; margin: 0 auto;">
+    <thead>
+      <tr>
+        <th>Message Type</th>
+        <th>Person</th>
+        <th>Message</th>
+      </tr>
+    </thead>
+    <tbody>     
+      <tr class="success">
+        <td>Start Condition</td>
+        <td>Master 1:</td>
+        <td><i class="fa fa-bell" aria-hidden="true"></i></td>
+      </tr>
+      <tr class="success">
+        <td>Slave Address</td>
+        <td>Master 1:</td>
+        <td>"slave B listen"</td>
+      </tr>
+      <tr class="info">
+        <td>Slave's Acknowledgment</td>
+        <td>Slave B:</td>
+        <td>"yes sir"</td>
+      </tr>
+      <tr class="success">
+        <td>Slave Instruction</td>
+        <td>Master 1:</td>
+        <td>"report temperature in F"</td>
+      </tr>
+      <tr class="info">
+        <td>Slave's Acknowledgment</td>
+        <td>Slave B:</td>
+        <td>"yes sir"</td>
+      </tr>
+      <tr class="success">
+        <td>Slave Address</td>
+        <td>Master 1:</td>
+        <td>"slave B go ahead"</td>
+      </tr>
+      <tr class="info">
+        <td>Slave's Acknowledgment</td>
+        <td>Slave B:</td>
+        <td>"yes sir"</td>
+      </tr>
+      <tr class="info">
+        <td>Slave Report</td>
+        <td>Slave B:</td>
+        <td>"95"</td>
+      </tr>
+      <tr class="success">
+        <td>Master's (Not) Acknowledgment</td>
+        <td>Master 1:</td>
+        <td>"enough"</td>
+      </tr>
+      <tr class="success">
+        <td>Stop Condition</td>
+        <td>Master 1:</td>
+        <td><i class="fa fa-bell" aria-hidden="true"></i><i class="fa fa-bell" aria-hidden="true"></i></td>
+      </tr>
+    </tbody>
+  </table>
+
+<p style="padding-top: 20px">Just to understand another important concept let's assume that the master wants to know the pressure from in psi and MPa from the slave C. They also agreed in advance that whenever the master acknowledges that the message was received, the slave sends the measurement in another unit. Slave C keeps track of pressure measurements in psi, MPa, atm and torr, so if the master received the measurement in psi, he/she acknowledges the message by "yes sir", to let the slave know to send the pressure in kPa as well. The slave keeps sending the measurement untill the master "not ackowledges" the receival by "enough" or slave has no more measurements to send. The conversation to receive a pressure mesurement in psi an kPa would look like that:</p>
+
+<table class="table" style="width: 50%; margin: 0 auto;">
+    <thead>
+      <tr>
+        <th>Message Type</th>
+        <th>Person</th>
+        <th>Message</th>
+      </tr>
+    </thead>
+    <tbody>     
+      <tr class="success">
+        <td>Start Condition</td>
+        <td>Master 1:</td>
+        <td><i class="fa fa-bell" aria-hidden="true"></i></td>
+      </tr>
+      <tr class="success">
+        <td>Slave Address</td>
+        <td>Master 1:</td>
+        <td>"slave C listen"</td>
+      </tr>
+      <tr class="info">
+        <td>Slave's Acknowledgment</td>
+        <td>Slave C:</td>
+        <td>"yes sir"</td>
+      </tr>
+      <tr class="success">
+        <td>Slave Instruction</td>
+        <td>Master 1:</td>
+        <td>"report pressure in psi"</td>
+      </tr>
+      <tr class="info">
+        <td>Slave's Acknowledgment</td>
+        <td>Slave C:</td>
+        <td>"yes sir"</td>
+      </tr>
+      <tr class="success">
+        <td>Slave Address</td>
+        <td>Master 1:</td>
+        <td>"slave C go ahead"</td>
+      </tr>
+      <tr class="info">
+        <td>Slave's Acknowledgment</td>
+        <td>Slave C:</td>
+        <td>"yes sir"</td>
+      </tr>
+      <tr class="info">
+        <td>Slave Report</td>
+        <td>Slave C:</td>
+        <td>"14.7"</td>
+      </tr>
+      <tr class="success">
+        <td>Master's Acknowledgment</td>
+        <td>Master 1:</td>
+        <td>"yes sir"</td>
+      </tr>
+      <tr class="info">
+        <td>Slave Report</td>
+        <td>Slave C:</td>
+        <td>"1013.5"</td>
+      </tr>
+      <tr class="success">
+        <td>Master's (Not) Acknowledgment</td>
+        <td>Master 1:</td>
+        <td>"enough"</td>
+      </tr>
+      <tr class="success">
+        <td>Stop Condition</td>
+        <td>Master 1:</td>
+        <td><i class="fa fa-bell" aria-hidden="true"></i><i class="fa fa-bell" aria-hidden="true"></i></td>
+      </tr>
+    </tbody>
+  </table>
+
+<p style="padding-top: 20px">This acknowlegment, not acknowledgment would come very handy especially if there was only one slave how was measuring all the different sensors at once. In that case the master would just tell the slave to report whatever measurement is first on the list and keep acknowledging untill all the required measurements were received. The conversation seems quites stupid and has many redundant messages, but this protocol is not really intended for humans, but digital devices instead. Whenever I said "they know something in <strong>advance</strong>", I meant that these are the <strong>rules</strong> of the protocol. Before going into the world of digital devices, let's go over some of the specifications and prerequisites.</p>
+
+<h3>Specifications and Prerequisites</h3>
 <p>I2C protocol is a multi-master, multi-slave, which means that a system of nodes (devices) can have multiple master devices and multiple slave devices. To understand what this means you need to understand what each one of them does:</p>
 <ul>
 	<li>Master Device: Generates the clock and initializes the communication with a slave device</li>
 	<li>Slave Device: Receives the clock and responds when addressed by the master.</li>
 </ul>
 <p>The microcontrollers such as the ATmega328 can be configured to act as a master or a slave device, whereas simpler sensor devices usually support only the slave mode.</p>
+
+<blockquote><small>One thing to keep in mind when using multiple masters is that they cannot communicate with each other, but they have to listen to I2C bus if anyone else is transmitting before requesting data from the slaves, so they don't request it at the same time, since the slaves would not understand what masters want if they request something at the same time. This also applies to the regular conversation between people. If you talked to an audience, everyone who listened would understand what you are saying (assuming you talked loud and clear in a language everyone understood). But if everyone in the audience tried to tell you something at the same time, you would just hear some jibber jabber. If two or more master devices would transmit a packet to slaves at the same time, the packets would <em>collide</em>, so in case of a multi-master I2C setup, some sort of packet collision aviodance mechanism has to be implemented. As I wrote before, this only applies if you have a project consisting of multiple master devices, otherwise do not worry about this now.</small></blockquote>
 
 <h4>Clock</h4>
 
@@ -45,84 +193,7 @@ experience with digital communication protocols except some basic understanding 
 
 <p>The number of devices that I2C can communicate with are defined by the number of bits each device's address consists of. I2C devices can have 7 or 10 bit addresses. In theory, the largest number that a 7-bit address can be is (1111111)<sub>2</sub> or (127)<sub>10</sub>, which would define the maximum number of devices connected to the same bus. Since there are some address that are reserved and cannot be used for addressing, the largest number is (112)<sub>10</sub>. (I am using the parentheses with a subscript to indicate the base of the number, so 2 for binary and 10 for decimal, later I will use 16 for hexadecimal.) The maximum number of devices is limited on the physical layer by the total bus capacitance.</p>
 
-<h3>Protocol</h3>
-
-<p>To explain how the protocol works I will use an example of three human slaves, where each one monitors a different sensor and reports the reading to the one of the two masters when they request it. Image below shows the three slaves and two masters.</p>
-
-<img src="images/master_slave.png" class="report-figure">
-
-<p>Slave A monitors a humidity sensor, slave B a thermometer and slave C a barometer. Masters 1 or 2 can ask the slaves for a reading whenever they want by addressing a desired slave and requesting the sensor reading. In smaller microcontroller projects, you will most likely use a single master, but in order to explain the full functionality of I2C, I'm using two masters.</p> 
-
-<blockquote><small>One thing to keep in mind when using multiple masters is that they cannot communicate with each other, but they have to listen to I2C bus if anyone else is transmitting before requesting data from the slaves, so they don't request it at the same time, since the slaves would not understand what masters want if they request something at the same time. This also applies to the regular conversation between people. If you talked to an audience, everyone who listened would understand what you are saying (assuming you talked loud and clear in a language everyone understood). But if everyone in the audience tried to tell you something at the same time, you would just hear some jibber jabber. If two or more master devices would transmit a packet to slaves at the same time, the packets would <em>collide</em>, so in case of a multi-master I2C setup, some sort of packet collision aviodance mechanism has to be implemented. As I wrote before, this only applies if you have a project consisting of multiple master devices, otherwise do not worry about this now.</small></blockquote>
-
-<p>For the beginning let's forget about the clock signal and focus only on the protocol of how the data is transmitted. Since there are three different slaves, each one of them has a name (an address) by which the master is going to get his (let's assume this slaves are all men) attention. To keep it simple I will just name them A, B an C, as depicted on the image.They agreed in advance that to get the data from slaves, a master has to first ring a bell, then get desired slave's attention and then tell the slave in what units the data should be reported. After that master gets a pencil and paper to write down the measurement received from the slave and call the name of the slave again, so the slave reports the measurement. Once the measurement is written down, the master rings the bell again to mark the end of conversation. The also agreed that whenever someone tells something to another, the receiver <strong>acknowledges</strong> that the instruction was heard. For an example, the conversation between a master and a slave to receive the temeperature in Fahrenheit would go as following:</p>
-
-<table class="table" style="width: 50%; margin: 0 auto;">
-    <thead>
-      <tr>
-        <th>Subject</th>
-        <th>Device</th>
-        <th>Message</th>
-      </tr>
-    </thead>
-    <tbody>     
-      <tr class="success">
-      	<td>Start Condition</td>
-        <td>Master 1:</td>
-        <td><i class="fa fa-bell" aria-hidden="true"></i></td>
-      </tr>
-      <tr class="success">
-      	<td>Slave Address</td>
-        <td>Master 1:</td>
-        <td>"slave B listen"</td>
-      </tr>
-      <tr class="info">
-      	<td>Slave Acknowledgment</td>
-        <td>Slave B:</td>
-        <td>"yes sir"</td>
-      </tr>
-      <tr class="success">
-      	<td>Slave Instruction</td>
-        <td>Master 1:</td>
-        <td>"report temperature in F"</td>
-      </tr>
-      <tr class="info">
-      	<td>Slave Acknowledgment</td>
-        <td>Slave B:</td>
-        <td>"yes sir"</td>
-      </tr>
-      <tr class="success">
-      	<td>Slave Address</td>
-        <td>Master 1:</td>
-        <td>"slave B go ahead"</td>
-      </tr>
-      <tr class="info">
-      	<td>Slave Acknowledgment</td>
-        <td>Slave B:</td>
-        <td>"yes sir"</td>
-      </tr>
-      <tr class="info">
-      	<td>Slave Report</td>
-        <td>Slave B:</td>
-        <td>"95"</td>
-      </tr>
-      <tr class="success">
-      	<td>Master Acknewledgment</td>
-        <td>Master 1:</td>
-        <td>"got it"</td>
-      </tr>
-      <tr class="success">
-      	<td>Stop Condition</td>
-        <td>Master 1:</td>
-        <td><i class="fa fa-bell" aria-hidden="true"></i></td>
-      </tr>
-    </tbody>
-  </table>
-
-<!--<p> Master 1 feels slightly cold and wants to know the temperature at the moment. Slave B looks at a thermometer every minute and writes down the temperate in Celsius and then converts it to Fahrenheit and writes that down too. Since master 1 is an american, he want to know the temperature in Fahrenheit, so he asks for slave B "slave B listen", if slave B is present (he better be), he responds back "yes sir", which means that he <strong>acknowledges</strong>. Master 1 now knows that slave B is present and is listening for the instruction. Then the master tells the slave "report temperature in F". If the slaves receives the instruction, he acknowledges again with "yes sir". They have an agreement that the slaves tell the master the measurement when the master tells the slave to reports, but no earlier, since the master needs to find a pencil and paper to write the measurement down. So right after the slave acknowledged, the master requests the temperature: "slave A tell me", then the slave reports the temperature in Fahrenheit "95", to end the conversation the master acknowledges that he received the temprerature "got it". This conversation seems to have many redundant messages, but since this protocol is not really intended for humans, but digital devices, this redundancy has its reasons as will be shown later.</p>-->
-
-
-<p>This conversation seems to have many redundant messages, but since this protocol is not really intended for humans, but digital devices, so let's replace human masters and slaves with a bunch of digital devices as shown on the image below.</p>
+<h3>Real Example</h3>
 
 <img src="images/maste_slave_real.png" class="report-figure" style="width: 90%">
 
