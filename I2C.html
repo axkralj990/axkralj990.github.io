@@ -171,9 +171,17 @@
 
 <p style="padding-top: 20px">This acknowlegment, not-acknowledgment agreement would prove more usefull if there was only one slave who was measuring all the different sensors at once. In that case the master would just tell the slave to report whatever measurement was the first on the list and keep acknowledging untill all the required measurements were received. The communications seems quite complicated and redundant, but this protocol is not really intended for humans, but digital devices instead. By saying that they know something in <strong>advance</strong>", it is implied that these are the <strong>rules</strong> of the protocol. Before going into the world of digital devices, let's go over some of the specifications and prerequisites.</p>
 
-<h3>Specifications and Prerequisites</h3>
+<h3>Basics</h3>
 
-<p>The devices involved in the I2C communication are all connected to the same set of wires, SDA (Serial Data Line) and SCL (Serial Clock Line), where all the data transfers takes place. The two wires constitute the I2C bus. As shown in the example above, I2C is a multi-master, multi-slave protocol, which means that a system of nodes (devices) can have multiple master devices and multiple slave devices. To understand what this means you need to understand what each one of them does. In a few words:</p>
+<p>In order to follow the tutorial you should be familiar with:</p>
+<ul>
+  <li>some basic electronics</li>
+  <li>the difference between binary, decimal, hexadecimal, ...</li>
+  <li>what registers are (at least know that they are a short piece of memory, in ATmega328P they are 8-bits long)
+</li>
+
+<p>The devices communicating via I2C are all connected to the same set of wires, SDA (Serial Data Line) and SCL (Serial Clock Line), where all the data transfers takes place. The two wires constitute the I2C bus. As shown in the example above, I2C is a multi-master, multi-slave protocol, which means that a system of nodes (devices) can have multiple master devices and multiple slave devices. To understand what this means you need to understand what each one of them does. In a few words:</p>
+
 <ul>
 	<li>Master Device: generates the clock and initializes the communication with a slave device</li>
 	<li>Slave Device: receives the clock and responds when addressed by the master.</li>
@@ -192,17 +200,19 @@
 
 <h4>Addressing</h4>
 
-<p>The number of devices that I2C can communicate with are defined by the number of bits each device's address consists of. I2C devices can have 7 or 10 bit addresses. In theory, the largest number that a 7-bit address can be is (1111111)<sub>2</sub> or (127)<sub>10</sub>, which defines the maximum number of devices connected to the same I2C bus. Since there are some address that are reserved and cannot be used for addressing, the maximum number of devices with 7-bit addresses is (112)<sub>10</sub>. (I am using the parentheses with a subscript to indicate the base of the number, so 2 for binary and 10 for decimal, later I will use 16 for hexadecimal.) The maximum number of devices is also limited at the physical layer by the total bus capacitance.</p>
+<p>The number of devices that I2C can communicate with are defined by the number of bits each device's address consists of. I2C devices can have 7 or 10 bit addresses. In theory, the largest number that a 7-bit address can be is (1111111)<sub>2</sub> or (127)<sub>10</sub>, which defines the maximum number of devices connected to the same I2C bus. Since there are some addresses that are reserved and cannot be used for addressing, the maximum number of devices with 7-bit addresses is (112)<sub>10</sub>. (I am using the parentheses with a subscript to indicate the base of the number, so 2 for binary and 10 for decimal and 16 for hexadecimal.) The maximum number of devices is also limited at the physical layer by the total bus capacitance.</p>
 
-<h3>Real Example</h3>
+<p>I2C addresses as well as any other memory addresss (registers, etc.) are by convention expressed in hexadecimal. Hexadecimal numbers are much more convenient then binary, since in binary the addresses would become very long, which would be very hard to remember and prone to mistakes. The conversion between hexadecimal and binary is much easier then between decimal and binary. Sometimes I will use the C-language syntax to indicate the base of the numbers, where decimal numbers are depicted simply as the number itself, binary numbers have 0b prefix (ex: 0b1010 = 10) and hexadecimals have 0x prefix (ex: 0xA = 0b1010 = 10).</p>
+
+<h3>Example with Digital Devices</h3>
 
 <p>To give the just explained information more sense, let's consider a real I2C example shown below.</p>
 
 <img src="images/maste_slave_real.png" class="report-figure" style="width: 90%">
 
-<p>This setup uses two masters, one is an Arduino Uno used to control something and the other one is a Raspberry Pi used for logging the data to a remote database. The slaves are 2 IMUs (Inertial Measurement Units) placed at two different locations on someting (ex. airplane, human body, etc.) to get the acceleration and/or angular rates for whatever reason those are needed.</p>
+<p>This setup uses two masters, one is an Arduino Uno used to control something and the other one is a Raspberry Pi used for storing the data to a remote database. The slaves are two MPU6050 IMUs, one placed on top of the left and the other on top of the right hand to get the acceleration and angular rates. (Improve the application!!!)</p>
 
-<p>As we switched from people to digital devices, the first thing to do is to wire them properly. As you can see on the image above, both I2C wires, SDA and SCL are connected to the some voltage source with 2 pull-up resistors. The reason the pull-up resistors are used is that the I2C lines are so called "open drain", which means that the signal can be pulled to low, but not to high. For projects with Arduino, Raspbeery Pi and similar devices, that source will usually be 3.3 or 5 V. The selection of pull-up reisistors is a bit more complicated, since an optimal resistance depends on the length of the wires and the number of connected devices to the bus. Sparkfun recommends to start with 4.7 k&#8486; resistors and work down if needed. All of the devices have to be to be connected to a common ground, this is very important. Before getting all frustrated by selecting proper pull-up resistors make sure that the devices you are going to use don't implement them already, for instance MPU6050 has both lines connected to high with 4.7 k&#8486; resistors.</p>
+<p>As we switched from people to digital devices, the first thing to do is to wire them properly. As you can see on the image above, both I2C wires, SDA and SCL are connected to the same voltage source by 2 pull-up resistors. The reason the pull-up resistors are used is that the I2C lines are open-drain (or open-collector in TTL), which means that the signal can be pulled to low, but not to high. For projects with Arduino, Raspberry Pi and other similar devices, the source is usually 3.3 V or 5 V. The selection of pull-up reisistors is a bit more complicated, since an optimal resistance depends on the length of the wires and the number of connected devices to the bus. Sparkfun recommends to start with 4.7 k&#8486; resistors and work down if needed. All of the devices have to be to be connected to a common ground, this is very important. Before getting all frustrated by selecting proper pull-up resistors make sure that the devices you are going to use don't implement them already, for instance MPU6050 has both lines connected to high with 4.7 k&#8486; resistors.</p>
 
 <p>Now that all's hooked up, let's go into the basics of the protocol. The clock signal on the SCL is generated by the master devices when it initiates the communication. When no communication is taking place, the SCL is constantly pulled to high. A very important rule of the protocol is that a signal on SDA can change only when the clock is low, except when the master assign the start and stop of the communication. Start and stop conditions consist of a change of state when the clock is high, they are defined as:</p>
 
@@ -211,7 +221,20 @@
 	<li>Stop: SDA is pulled low from high.</li>
 </ul>
 
-<p>For this example I will asume all the I2C slaves use 7-bit addresses, slave A has the address (68)<sub>16</sub> and slave B the address (69)<sub>16</sub>. As you can see this addresses are expressed in hexadecimal, this is very common convention for all memory addresses. Hexadecimal numbers are conventionaly used to addressing memory locations and register, since using in binary the addresses would become very long and confusing. Conversion between hexadecimal and binary is also very simple.</p>
+<p>Right after the start condition is transmitted by the master, other communication information follows. Devices decode whether the bit send is true or false, by checking if the voltage is high or low when the clock (SCL) is high. ***SHOW THE PROBE***</p>
+
+<p>For this example I will asume all the I2C slaves use 7-bit addresses, slave A has the address (68)<sub>16</sub> and slave B the address (69)<sub>16</sub>. So in order to address the right slave, its address has to be sent in binary right after the start bit,... ***ADD UNORDERED LIST FOR ADDRESSES***</p>
+
+<p>***READ/WRITE BIT***</p>
+
+<p>***ACK/NACK***</p>
+
+<p>***OSCILLOSCOPE EXAMPLE OF READ AND WRITE***<p>
+
+<h3>Arduino Code Example</h3>
+<h3>ATmega328p Code Example</h3>
+<h3>Raspberry Pi Code Example</h3>
+
 
 
 <h3>Communication Principle</h3>
