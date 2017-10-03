@@ -223,11 +223,28 @@
 
 <p>Right after the start condition is transmitted by the master, other communication information follows. Devices decode whether the bit send is true or false, by checking if the voltage is high or low when the clock (SCL) is high. ***SHOW THE PROBE***</p>
 
-<p>For this example I will asume all the I2C slaves use 7-bit addresses, slave A has the address (68)<sub>16</sub> and slave B the address (69)<sub>16</sub>. So in order to address the right slave, its address has to be sent in binary right after the start bit,... ***ADD UNORDERED LIST FOR ADDRESSES***</p>
+<p>For this example I will asume all the I2C slaves use 7-bit addresses, slave A has the address (68)<sub>16</sub> and slave B the address (69)<sub>16</sub>. So in order to address the right slave, its address has to be sent in binary right after the start bit. So to address the (68)<sub>16</sub> MPU6050, (1101000)<sub>2</sub> has to be sent.</p>
 
-<p>***READ/WRITE BIT***</p>
+<p>Just like the master had to tell the slave wheter to listen or do report the data, the master device has to do the same, so the bit sent after the address is called the READ/WRITE bit, where:</p>
 
-<p>***ACK/NACK***</p>
+<ul>
+  <li>Read: 1 (low)</li>
+  <li>Write: 0 (high)</li>
+</ul>
+
+<p>Sometimes the addresses are written as devices write and read address. Those addresses are just the 7-bit device's address with the READ/WRITE bit appended. For the (68)<sub>16</sub> MPU6050 we could write read and write addresses as following:</p>
+
+<ul>
+  <li>Read Address: (11010001)<sub>2</sub> = (D1)<sub>16</sub></li>
+  <li>Write Address: (11010000)<sub>2</sub> = (D0)<sub>16</sub></li>
+</ul>
+
+<p>After the slave know whether a master wants to receive data from it or write to it, it has to acknowledge/not-acknowledge the message. The acknowledge bit is depicted as ACK and not-ackowledge as NACK, where:</p>
+
+<ul>
+  <li>ACK: 0 (low)</li>
+  <li>NACK: 1 (high)</li>
+</ul>
 
 <p>***OSCILLOSCOPE EXAMPLE OF READ AND WRITE***<p>
 
