@@ -21,7 +21,7 @@
     <h1>I2C</h1>
 
 <h3>Introduction</h3>
-<p>I2C (pronounced I-two-C) is a very popular communication protocol in the world of microcontrollers. It's advantage is that it allows communication between multiple devices by using only two wires, SDA (Serial Data Line) and SCL (Serial Clock Line), unlike USART or SPI where every pair of devices needs its own set of wires. The protocol was invented by Phillips Semiconductors in 1982. The first time I encountered I2C was when I wanted to measure the orientation in space with my Arduino. For that purpose I bought an MPU6050 inertial measurement unit (IMU) that required I2C to talk to it. At first I was really confused since I had no experience with digital communication protocols except some basic understanding of USART from using Arduinos Serial library. The first time I looked at an example code for reading accelerometer and gyroscope data from the MPU6050, it scared the hell out of me with ~100 lines of code consisting of nothing but a bunch of hexadecimal register addresses. This is when I realized that in order to learn anything more than just sending a "Hello World!" via serial line I would have to dedicate some more time. In this tutorial I will try to do my best to explain the principle of the I2C protocol and show an I2C example using an Arduino, ATMega328P and Raspberry Pi, but not all at once, I will start with an Arduino Uno and add examples with other devices later. For all the examples I will use the MPU6050, but you may use whichever device you desire.</p>
+<p>I2C (pronounced I-two-C) is a very popular communication protocol in the world of microcontrollers. It's advantage is that it allows communication between multiple devices by using only two wires, SDA (Serial Data Line) and SCL (Serial Clock Line), unlike USART or SPI where every pair of devices needs its own set of wires. The protocol was invented by Phillips Semiconductors in 1982. The first time I encountered I2C was when I wanted to measure the orientation in space with my Arduino. For that purpose I bought an MPU6050 inertial measurement unit (IMU) that required I2C to talk to it. At first I was really confused since I had no experience with digital communication protocols except some basic understanding of USART from using Arduino Serial library. The first time I looked at an example code for reading accelerometer and gyroscope data from the MPU6050, it scared the hell out of me with ~100 lines of code consisting of nothing but a bunch of hexadecimal register addresses. This is when I realized that in order to learn anything more than just sending a "Hello World!" via serial line I would have to dedicate some more time. In this tutorial I will try to do my best to explain the principle of the I2C protocol and show an I2C example using an Arduino, ATMega328P and Raspberry Pi, but not all at once, I will start with an Arduino Uno and add examples with other devices later. For all the examples I will use the MPU6050, but you may use whichever device you desire.</p>
 
 <h3>Principle</h3>
 
@@ -31,7 +31,7 @@
 
 <p>Slave A monitors a humidity sensor, slave B a thermometer and slave C a barometer. Masters 1 or 2 can ask the slaves for readings whenever they want. In smaller microcontroller projects, you will most likely use a single master, but in order to explain the full functionality of I2C, I'm using two masters.</p> 
 
-<p>Since there are three different slaves, each one of them has a name (an address) by which the master is going to get their attention. To keep it simple I will just name them A, B an C, as depicted on the image. They agreed in advance that to get the data from the slaves, a master has to first remotelly ring a bell at the site where the slaves are, get the desired slave's attention by calling the slave's name and then tell the slave in what units the data should be reported. Once the master gets a pencil and a paper to write down the measurement from the slave he/she transmitts the name of the slave again, which means that the slave should report the measurement. Once the measurement is written down, the master rings the bell twice to mark the end of the conversation. To make sure that a certain slave is present (better be) and that the instruction was heard, the receiver <strong>acknowledges</strong> that the instruction was received (let's assume that the masters have some respect for the slaves, so both acknowledge by transmitting "yes sir"). If the master is happy with the received message, he/she transmitts "enough", to indicate that this was all that was needed. I will call this "enough" as not-acknowledged (sounds weird, but you will see later why I call it like that). In order for the master 1 to receive the temperature in Fahrenheit from the slave B, the conversation would go as following:</p>
+<p>Since there are three different slaves, each one of them has a name (an address) by which the master is going to get their attention. To keep it simple I will just name them A, B an C, as depicted on the image. They agreed in advance that to get the data from the slaves, a master has to first remotely ring a bell at the site where the slaves are, get the desired slave's attention by calling the slave's name and then tell the slave in what units the data should be reported. Once the master gets a pencil and a paper to write down the measurement from the slave he/she transmits the name of the slave again, which means that the slave should report the measurement. Once the measurement is written down, the master rings the bell twice to mark the end of the conversation. To make sure that a certain slave is present (better be) and that the instruction was heard, the receiver <strong>acknowledges</strong> that the instruction was received (let's assume that the masters have some respect for the slaves, so both acknowledge by transmitting "yes sir"). If the master is happy with the received message, he/she transmits "enough", to indicate that this was all that was needed. I will call this "enough" as not-acknowledged (sounds weird, but you will see later why I call it like that). In order for the master 1 to receive the temperature in Fahrenheit from the slave B, the conversation would go as following:</p>
 
 <table class="table" style="width: 80%; margin: 0 auto;">
     <thead>
@@ -95,7 +95,7 @@
     </tbody>
   </table>
 
-<p style="padding-top: 20px">Just to understand another important concept let's assume that the master 1 wants to know the pressure in psi and MPa from the slave C. They also agreed in advance that whenever the master acknowledges the receival by "yes sir", the slave then just transmitts the measurement in another unit right after. Slave C keeps track of pressure measurements in psi, MPa, atm and torr, so if the master received the measurement in psi, he/she acknowledges the message by "yes sir", to let the slave know to send the pressure in kPa as well. The slave keeps sending the measurement until the master "not-ackowledges" the receival by "enough" or until the slave has no more measurements to send. The conversation for receiveing pressure mesurements in psi and kPa would go like this:</p>
+<p style="padding-top: 20px">Just to understand another important concept let's assume that the master 1 wants to know the pressure in psi and MPa from the slave C. They also agreed in advance that whenever the master acknowledges the reception by "yes sir", the slave then just transmits the measurement in another unit right after. Slave C keeps track of pressure measurements in psi, MPa, atm and torr, so if the master received the measurement in psi, he/she acknowledges the message by "yes sir", to let the slave know to send the pressure in kPa as well. The slave keeps sending the measurement until the master "not-acknowledges" the reception by "enough" or until the slave has no more measurements to send. The conversation for receiving pressure measurements in psi and kPa would go like this:</p>
 
 <table class="table" style="width: 80%; margin: 0 auto;">
     <thead>
@@ -169,9 +169,9 @@
     </tbody>
   </table>
 
-<p style="padding-top: 20px">This acknowlegment, not-acknowledgment agreement would prove more usefull if there was only one slave who was measuring all the different sensors at once. In that case the master would just tell the slave to report whatever measurement was the first on the list and keep acknowledging untill all the required measurements were received. The communications seems quite complicated and redundant, but this protocol is not really intended for humans, but digital devices instead. By saying that they know something in <strong>advance</strong>", it is implied that these are the <strong>rules</strong> of the protocol. Before going into the world of digital devices, let's go over some of the specifications and prerequisites.</p>
+<p style="padding-top: 20px">This acknowledgment, not-acknowledgment agreement would prove more useful if there was only one slave who was measuring all the different sensors at once. In that case the master would just tell the slave to report whatever measurement was the first on the list and keep acknowledging until all the required measurements were received. The communications seems quite complicated and redundant, but this protocol is not really intended for humans, but digital devices instead. By saying that they know something in <strong>advance</strong>", it is implied that these are the <strong>rules</strong> of the protocol. Before going into the world of digital devices, let's go over some of the specifications and prerequisites.</p>
 
-<h3>Basics</h3>
+<h3>The Basics</h3>
 
 <p>In order to follow the tutorial you should be familiar with:</p>
 <ul>
@@ -195,7 +195,7 @@
 
 <p>SDA is where the data, the payload, is transmitted between the devices.</p>
 
-<p>SCL is where the master sends the generated clock signal that the slave devices receive. With this said, a shared clock between the master and slave devices makes I2C a <strong>synchronous protocol</strong>, in contrast of USART, which is <strong>asynchrounous</strong>. In asynchronous protocols the two devices talking to each other need to know in advance the rate at which they will transfer bits (baudrate).</p>
+<p>SCL is where the master sends the generated clock signal that the slave devices receive. With this said, a shared clock between the master and slave devices makes I2C a <strong>synchronous protocol</strong>, in contrast of USART, which is <strong>asynchronous</strong>. In asynchronous protocols the two devices talking to each other need to know in advance the rate at which they will transfer bits (baudrate).</p>
 
 <p>The clock that the master generates defines the rate at which the data is transfered. I2C supports various clock speeds, but simple devices commonly used in microcontroller projects support the original 100 kHz mode or the 400 kHz fast-mode. The fastest supported mode for I2C right now is 5 GHz Ultra Fast-mode.</p>
 
@@ -203,7 +203,7 @@
 
 <p>The number of devices that I2C can communicate with are defined by the number of bits each device's address consists of. I2C devices can have 7 or 10 bit addresses. In theory, the largest number that a 7-bit address can be is (1111111)<sub>2</sub> or (127)<sub>10</sub>, which defines the maximum number of devices connected to the same I2C bus. Since there are some addresses that are reserved and cannot be used for addressing, the maximum number of devices with 7-bit addresses is (112)<sub>10</sub>. (I am using the parentheses with a subscript to indicate the base of the number, so 2 for binary and 10 for decimal and 16 for hexadecimal.) The maximum number of devices is also limited at the physical layer by the total bus capacitance.</p>
 
-<p>I2C addresses as well as any other memory addresss (registers, etc.) are by convention expressed in hexadecimal. Hexadecimal numbers are much more convenient then binary, since in binary the addresses would become very long, which would be very hard to remember and prone to mistakes. The conversion between hexadecimal and binary is much easier then between decimal and binary. Sometimes I will use the C-language syntax to indicate the base of the numbers, where decimal numbers are depicted simply as the number itself, binary numbers have 0b prefix (ex: 0b1010 = 10) and hexadecimals have 0x prefix (ex: 0xA = 0b1010 = 10).</p>
+<p>I2C addresses as well as any other memory address (registers, etc.) are by convention expressed in hexadecimal. Hexadecimal numbers are much more convenient then binary, since in binary the addresses would become very long, which would be very hard to remember and prone to mistakes. The conversion between hexadecimal and binary is much easier then between decimal and binary. Sometimes I will use the C-language syntax to indicate the base of the numbers, where decimal numbers are depicted simply as the number itself, binary numbers have 0b prefix (ex: 0b1010 = 10) and hexadecimals have 0x prefix (ex: 0xA = 0b1010 = 10).</p>
 
 <h3>Example with Digital Devices</h3>
 
@@ -211,45 +211,47 @@
 
 <img src="images/master_slave_real.png" class="report-figure" style="width: 95%">
 
-<p>This setup uses two masters, one is an Arduino Uno used to control something and the other one is a Raspberry Pi used for storing the data to a remote database. The slaves are two MPU6050 IMUs, one placed on top of the left and the other on top of the right hand to get the acceleration and angular rates. (Improve the application!!!)</p>
+<p>This setup uses two masters, one is an Arduino Uno used to control something and the other one is a Raspberry Pi used for storing the data to a remote database. The slaves are two MPU6050 IMUs, placed on two different spots on, for example, a spaceship.</p>
 
-<p>As we switched from people to digital devices, the first thing to do is to wire them properly. As you can see on the image above, both I2C wires, SDA and SCL are connected to the same voltage source by 2 pull-up resistors. The reason the pull-up resistors are used is that the I2C lines are open-drain (or open-collector in TTL), which means that the signal can be pulled to low, but not to high. For projects with Arduino, Raspberry Pi and other similar devices, the source is usually 3.3 V or 5 V. The selection of pull-up reisistors is a bit more complicated, since an optimal resistance depends on the length of the wires and the number of connected devices to the bus. Sparkfun recommends to start with 4.7 k&#8486; resistors and work down if needed. All of the devices have to be to be connected to a common ground, this is very important. Before getting all frustrated by selecting proper pull-up resistors make sure that the devices you are going to use don't implement them already, for instance MPU6050 has both lines connected to high with 4.7 k&#8486; resistors.</p>
+<p>As we switched from people to digital devices, the first thing to do is to wire them properly. As you can see on the image above, both I2C wires, SDA and SCL are connected to the same voltage source by 2 pull-up resistors. The reason the pull-up resistors are used is that the I2C lines are open-drain (or open-collector in TTL), which means that the signal can be pulled to low, but not to high. For projects with Arduino, Raspberry Pi and other similar devices, the source is usually 3.3 V or 5 V. The selection of pull-up resistors is a bit more complicated, since an optimal resistance depends on the length of the wires and the number of connected devices to the bus. Sparkfun recommends to start with 4.7 k&#8486; resistors and work down if needed. All of the devices have to be to be connected to a common ground, this is very important. Before getting all frustrated by selecting proper pull-up resistors make sure that the devices you are going to use don't implement them already, for instance MPU6050 has both lines connected to high with 4.7 k&#8486; resistors. If all the devices are very close to each other that should usually work most of the time, but if you intend to use longer wires for I2C, you might have to try different pull-up resistors. Also keep in mind that longer wires are more prone for errors, so if there is much more environmental noise, they should be kept as short as possible.</p>
 
-<p>Now that all's hooked up, let's go into the basics of the protocol. The clock signal on the SCL is generated by the master devices when it initiates the communication. When no communication is taking place, the SCL is constantly pulled to high. A very important rule of the protocol is that a signal on SDA can change only when the clock is low, except when the master assign the start and stop of the communication. Start and stop conditions consist of a change of state when the clock is high, they are defined as:</p>
+<p>Now that all is hooked up, let's go into the basics of the protocol. The clock signal on the SCL is generated by the master devices when it initiates the communication. When no communication is taking place, the SCL is constantly pulled to high. A very important rule of the protocol is that a signal on SDA can change only when the clock is low, except when the master assign the start and stop of the communication. Start and stop conditions consist of a change of state when the clock is high, they are defined as:</p>
 
 <ul>
 	<li>Start: SDA is pulled from high to low</li>
 	<li>Stop: SDA is pulled low from high.</li>
 </ul>
 
-<p>Right after the start condition is transmitted by the master, other communication information follows. Devices decode whether the bit send is true or false, by checking if the voltage is high or low when the clock (SCL) is high. It's easier to exapain this with a simple timing diagram as shown below: (For drawing timing diagrams I use <a href="http://wavedrom.com/" target="_blank">WaveDorm</a>.)</p>
+<p>Right after the start condition is transmitted by the master, other communication information follows. Devices decode whether the bit send is true or false, by checking if the voltage is high or low when the clock (SCL) is high. It's easier to explain this with a simple timing diagram as shown below: (For drawing timing diagrams I use <a href="http://wavedrom.com/" target="_blank">WaveDorm</a>.)</p>
 
 <img src="images/I2C_timing.png" class="report-figure" style="width: 90%">
 
 <p>In this example I will use devices with 7-bit addresses, slave A has the address (68)<sub>16</sub> and slave B the address (69)<sub>16</sub>. So in order to address the right slave, its address has to be sent in binary right after the start bit. So to address the (68)<sub>16</sub> MPU6050, (1101000)<sub>2</sub> has to be sent.</p>
 
-<p>Just like the master had to tell the slave wheter to listen or do report the data, the master device has to do the same, so the bit sent after the address is called the READ/WRITE bit, where:</p>
+<p>Just like the master had to tell the slave whether to listen or do report the data, the master device has to do the same, so the bit sent after the address is called the <strong>direction bit</strong> (READ/WRITE), where:</p>
 
 <ul>
   <li>Read: 1 (low)</li>
   <li>Write: 0 (high)</li>
 </ul>
 
-<p>Sometimes the addresses are written as devices write and read address. Those addresses are just the 7-bit device's address with the READ/WRITE bit appended. For the (68)<sub>16</sub> MPU6050 we could write read and write addresses as following:</p>
+<p>Sometimes the addresses are written as devices <strong>write</strong> and <strong>read address</strong>. Those addresses are just the 7-bit device's address with the direction bit appended. For the (68)<sub>16</sub> MPU6050 we could write read and write addresses as following:</p>
 
 <ul>
   <li>Read Address: (11010001)<sub>2</sub> = (D1)<sub>16</sub></li>
   <li>Write Address: (11010000)<sub>2</sub> = (D0)<sub>16</sub></li>
 </ul>
 
-<p>After the slave know whether a master wants to receive data from it or write to it, it has to acknowledge/not-acknowledge the message. The acknowledge bit is depicted as ACK and not-ackowledge as NACK, where:</p>
+<p>When the slave is address and no errors occurred, the slave acknowledge the message. The acknowledge bit is depicted as <strong>ACK</strong> and not-acknowledge as <strong>NACK</strong>, where:</p>
 
 <ul>
   <li>ACK: 0 (low)</li>
   <li>NACK: 1 (high)</li>
 </ul>
 
-<p>To recap how the whole communication between a master and a slave goes, I will show it in a similar table I used in the second example, except here I will use an IMU for getting the 16-bit unsigned integer reading of the acceleration in X direction (the coordinate axis is draw on the accelerometer, this information doesn't really mattter for now). Because only 8-bit number can be read from a device right now and because the IMU (as well as the ATmega328P) store the data in 8-bit registers, 16-bit numbers have to be store in two separate registers. The most significant 8 bits are stored at one location and the least significant 8-bit are stored at another location, most of the time they are in the next location from the most significant bit, so they can be read one after another. Here is the table:</p>
+<p>ACK and NACK bit is transmitted by the received device, whether this is a master or the slave, right after the 8-bit from the sender are received. NACK bit is used to let the sender know that enough information was received and that the communication is about to stop or whenever an error occurred, so it can be used for error checking. This also makes I2C suitable for noise environments.</p>
+
+<p>To recap how the whole communication between a master and a slave goes, I will show it in a similar table I used in the second example, except here I will use an IMU for getting the 16-bit unsigned integer reading of the acceleration in X direction (the coordinate axis is draw on the accelerometer, this information doesn't really matter for now). Because only 8-bit number can be read from a device right now and because the IMU (as well as the ATmega328P) store the data in 8-bit registers, 16-bit numbers have to be store in two separate registers. The most significant 8 bits are stored at one location and the least significant 8-bit are stored at another location, most of the time they are in the next location from the most significant bit, so they can be read one after another. Here is the table:</p>
 
 <table class="table" style="width: 80%; margin: 0 auto;">
     <thead>
@@ -336,26 +338,29 @@
     </tbody>
   </table>
 
-<p>Now let's see if all I said in this post is true, by looking at the oscilloscope output of SDA and SCL measurements while talking to MPU6050 with Arduino Uno.<p>
+<p style="padding-top: 20px">Now let's see if all I said in this post is true, by looking at the oscilloscope output of SDA and SCL measurements while talking to MPU6050 with Arduino Uno. But before we can do that we have to connect the devices together and write some code.<p>
 
 <h3>Arduino Code Example</h3>
+
+<p>For this example I will use the MPU6050 IMU as well, since this is a chip I work most often with and I think it's simple enough to use it for introductory I2C example. The MPU6050 operates on 3.3 V, but the board has a voltage regulator, so it will work by connecting it to 5 V as well. The schematic for this example is shown below:</p>
+
+<img src="images/arduinoExample.png" class="report-figure" style="width: 50%; padding-top: 20px; padding-bottom: 20px;">
+
+<p>The Vcc pin on the MPU6050 is connected to 5 V on Arduino. Grounds (GND) are connected together. SCL and SDA pins on the MPU6050 are connected to SCL and SDA on the Arduino, SCL is on pin A5 and SDA is on pin A4. AD0 pin on the MPU6050 is connected to ground, the AD0 pin is a device address select pin, since if connected to ground, MPU6050's address is (68)<sub>16</sub>, if connected to Vcc, its address is (69)<sub>16</sub>. This makes it possible to use two MPU6050s on the same I2C bus.</p>
+
+<p>With the MPU6050 we can measure acceleration and angular rates in three axis (X, Y and Z), but for simplicity I will read only acceleration in Z direction from it. All of the measurements on the IMU are 16-bits longs, hence they are stored in two separate registers that have to be read from and combined into one 16-bit value on the Arduino.</p>
+
+<p>In the example with ATmega328P I will go more into lower level details on how I2C works, but in this example with the Arduino Uno, I will keep it a bit simpler and use Arduino's "Wire.h" library that is written specifically for I2C communication. First I will show the code and then explain it line by line.</p>
+
+
+
 <h3>ATmega328p Code Example</h3>
+
+<p>Coming soon...</p>
+
 <h3>Raspberry Pi Code Example</h3>
 
-
-
-<h3>Communication Principle</h3>
-<ul>
-	<li>I2C clock speeds</li>
-	<li>Connections (common ground, open drain -> pull-ups)</li>
-	<li>"offtopic" create a registers tutorial</li>
-	<li>Start/Stop address read/write ACK/NACK registers (explain those briefly -> something that I learned from programing AVRs) repeated start</li>
-	<li>Write to MPU6050 example</li>
-	<li>Read from MPU6050 (repeated start) exampe</li>
-	<li>Outline for establishing the communication (regardless of the micro controller)</li>
-	<li>Some basic physics (time constant)</li>
-</ul>
-
+<p>Coming soon...</p>
 
 <p>Author: alex.kraljic@gmail.com</p>
 
