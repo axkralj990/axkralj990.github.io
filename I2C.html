@@ -18,10 +18,10 @@
 
 	<div class="container" style="margin-top: 70px;">
 
-    <h1>I2C</h1>
+    <h1>I<sup>2</sup>C</h1>
 
 <h3>Introduction</h3>
-<p>I2C (pronounced I-two-C) is a very popular communication protocol in the world of microcontrollers. It's advantage is that it allows communication between multiple devices by using only two wires, SDA (Serial Data Line) and SCL (Serial Clock Line), unlike USART or SPI where every pair of devices needs its own set of wires. The protocol was invented by Phillips Semiconductors in 1982. The first time I encountered I2C was when I wanted to measure the orientation in space with my Arduino. For that purpose I bought an MPU6050 inertial measurement unit (IMU) that required I2C to talk to it. At first I was really confused since I had no experience with digital communication protocols except some basic understanding of USART from using Arduino Serial library. The first time I looked at an example code for reading accelerometer and gyroscope data from the MPU6050, it scared the hell out of me with ~100 lines of code consisting of nothing but a bunch of hexadecimal register addresses. This is when I realized that in order to learn anything more than just sending a "Hello World!" via serial line I would have to dedicate some more time. In this tutorial I will try to do my best to explain the principle of the I2C protocol and show an I2C example using an Arduino, ATMega328P and Raspberry Pi, but not all at once, I will start with an Arduino Uno and add examples with other devices later. For all the examples I will use the MPU6050, but you may use whichever device you desire.</p>
+<p>I<sup>2</sup>C (pronounced I-two-C and usually written as I2C as well) is a very popular communication protocol in the world of microcontrollers. It's advantage is that it allows communication between multiple devices by using only two wires, SDA (Serial Data Line) and SCL (Serial Clock Line), unlike USART or SPI where every pair of devices needs its own set of wires. The protocol was invented by Phillips Semiconductors in 1982. The first time I encountered I2C was when I wanted to measure the orientation in space with my Arduino. For that purpose I bought an MPU6050 inertial measurement unit (IMU) that required I2C to talk to it. At first I was really confused since I had no experience with digital communication protocols except some basic understanding of USART from using Arduino Serial library. The first time I looked at an example code for reading accelerometer and gyroscope data from the MPU6050, it scared the hell out of me with ~100 lines of code consisting of nothing but a bunch of hexadecimal register addresses. This is when I realized that in order to learn anything more than just sending a "Hello World!" via serial line I would have to dedicate some more time. In this tutorial I will try to do my best to explain the principle of the I2C protocol and show an I2C example using an Arduino, ATMega328P and Raspberry Pi, but not all at once, I will start with an Arduino Uno and add examples with other devices later. For all the examples I will use the MPU6050, but you may use whichever device you desire. I will sometimes refer to Arduino and the ATmega328P, simply as ATmega328P, since this is the microcontroller on the Arduino, but I will provide an example on how to use I2C on a standalone ATmega328P chip. In terms of legal issues, I<sup>2</sup>C can be freely implemented, but in order to use the name I<sup>2</sup>C on any product, you would have to pay, so most of the products use different names for the product. For instance Atmel uses "Two-wire interface" (TWI) on they chips (ATmega328P).</p>
 
 <h3>Principle</h3>
 
@@ -175,9 +175,10 @@
 
 <p>In order to follow the tutorial you should be familiar with:</p>
 <ul>
-  <li>some basic electronics</li>
+  <li>basic electronics</li>
+  <li>basic C (or Arduino dialect)</li>
   <li>the difference between binary, decimal, hexadecimal, ...</li>
-  <li>what registers are (at least know that a register is a storage area where data and instructions are stored, in ATmega328P they are 8-bits long)
+  <li>what registers are (at least know that a register is a storage area where data or instructions are stored, in ATmega328P they are 8-bits long)
 </li>
 </ul>
 
@@ -352,7 +353,36 @@
 
 <p>In the example with ATmega328P I will go more into lower level details on how I2C works, but in this example with the Arduino Uno, I will keep it a bit simpler and use Arduino's "Wire.h" library that is written specifically for I2C communication. First I will show the code and then explain it line by line.</p>
 
+<pre class=".pre-scrollable"><code>
+#include&lt;Wire.h&gt;
 
+#define MPU6050_ADDRESS 0x68 // MPU Address
+#define MPU6050_RA_ACCEL_XOUT_H 0x3B
+#define MPU6050_RA_ACCEL_XOUT_L 0x3C
+#define MPU6050_RA_PWR_MGMT_1 0x6B
+
+int16_t AcX;
+
+void setup(){
+  Wire.begin(); //  the I2C bus as a master
+  Wire.beginTransmission(MPU6050_ADDRESS); // begin transmission to MPU6050 (Slave)
+  Wire.write(MPU6050_RA_PWR_MGMT_1); // send the power management register address
+  Wire.write(1); // set the clock source to X-gyro (performs slightly better than the default 8 MHz)
+  Wire.endTransmission(true); // transmits the addresses queued with Wire.write() and ends the transmission initiated by Wire.beginTransmission()
+  Serial.begin(9600); // initiate a serial communication at 9600 bits/s
+}
+void loop(){
+  Wire.beginTransmission(MPU6050_ADDRESS); // begin transmission to MPU6050 (Slave)
+  Wire.write(MPU6050_RA_ACCEL_XOUT_H);  // send the ACCEL_XOUT_H register
+  Wire.endTransmission(false); // send the queued ACCEL_XOUT_H register and send repeated start the "writing to slave" transmission
+  Wire.requestFrom(MPU6050_ADDRESS,2,true);  // request 2 bytes from the slave 
+  AcX=Wire.read()<<8|Wire.read();  // combine data from both registers, the 0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L) into one 16-bit variable  
+  Serial.print("AcX = "); Serial.println(AcX); // send the measurement via serial
+  delay(10); // 10 ms delay
+}
+</code></pre>
+
+<p>I will assume that you know the basics of C or Arduino dialect, so I won't go into details on how to include a library, such as Wire.h, how to declare a variable or what setup() and loop() functions are.
 
 <h3>ATmega328p Code Example</h3>
 
