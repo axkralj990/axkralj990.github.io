@@ -351,7 +351,7 @@
 
 <p>With the MPU6050 we can measure acceleration and angular rates in three axis (X, Y and Z), but for simplicity I will read only acceleration in Z direction from it. All of the measurements on the IMU are 16-bits longs, hence they are stored in two separate registers that have to be read from and combined into one 16-bit value on the Arduino.</p>
 
-<p>In the example with ATmega328P I will go more into lower level details on how I2C works, but in this example with the Arduino Uno, I will keep it a bit simpler and use Arduino's "Wire.h" library that is written specifically for I2C communication. First I will show the code and then explain it line by line.</p>
+<p>In the example with ATmega328P I will go more into lower level details on how I2C works, but in this example with the Arduino Uno, I will keep it a bit simpler and use Arduino's "Wire.h" library that is written specifically for I2C communication. First I will show the code and then explain the I2C functions.</p>
 
 <pre class=".pre-scrollable"><code>
 #include&lt;Wire.h&gt;
@@ -364,7 +364,7 @@
 int16_t AcX;
 
 void setup(){
-  Wire.begin(); //  the I2C bus as a master
+  Wire.begin(); //  join the I2C bus as a master
   Wire.beginTransmission(MPU6050_ADDRESS); // begin transmission to MPU6050 (Slave)
   Wire.write(MPU6050_RA_PWR_MGMT_1); // send the power management register address
   Wire.write(1); // set the clock source to X-gyro (performs slightly better than the default 8 MHz)
@@ -382,7 +382,26 @@ void loop(){
 }
 </code></pre>
 
-<p>I will assume that you know the basics of C or Arduino dialect, so I won't go into details on how to include a library, such as Wire.h, how to declare a variable or what setup() and loop() functions are.
+<p>I will assume that you know the basics of C or Arduino dialect, so I won't go into details on how to include a library, such as Wire.h, how to declare a variable or what setup() and loop() functions are.</p>
+
+<p><code>Wire.begin();</code> sets up the chip for the I2C communications and joins the I2C bus as a master. (If we wanted the Arduino to be as a slave device, we would pass a desired I2C address to the begin method.)</p>
+
+<p><code>Wire.beginTransmission(MPU6050_ADDRESS);</code> does what is says, it begins the transmission with the slave device, in this case the MPU6050 with the address 0x68 as defined with the MPU6050_ADDRESS macro.</p>
+
+<p>The following two lines: <code>Wire.write(MPU6050_RA_PWR_MGMT_1);</code> and <code>Wire.write(1);</code> queue ("store") the bytes to be sent to the slave device when <code>Wire.endTransmission(true)</code> is called. The input argument for the endTransmission method specifies whether to end the transmission with a <strong>Stop condition</strong> or a <strong>Repeated Start condition</strong>. The repeated start is used when we want to send a command to a device and then read the response right away. This keeps the I2C bus busy, so another master on the bus cannot interrupt the transmission. The MPU6050_RA_PWR_MGMT_1 register sets up the clock source that drives the IMU. I don't want to go into details here, I will write another post about the MPU6050. For now just remember that by setting the MPU6050_RA_PWR_MGMT_1 register to 0b00000000 (0) the MPU6050 will use its internal 8 MHz clock, by setting the register to 0b00000001 (1), it will use the X-gyroscopes clock, which was determined to be a bit more stable than the default clock. One very important thing to remember how Arduino's wire.h library works is that it queues the bytes we want to send and sends all of them when endTransmission method is called. A queue is a FIFO (First In First Out) data structure, which means that whatever we queue first, will be sent first. Let's show how this works on the code written inside the loop() function.</p>
+
+<ol>
+<li><code>Wire.beginTransmission(MPU6050_ADDRESS);</code>-queue the 7-bit MPU6050 address - 0b1101000</li>
+<li><code>Wire.write(MPU6050_RA_ACCEL_XOUT_H);</code>-queue a 0 (write to slave) bit after the address and the register address byte we want to send to the slave</li>
+<li><code>Wire.endTransmission(false);</code>-send the two bytes queue above and send a <strong>repeated start</strong> instead of a stop conditions, because we want to receive data from the slave</li>
+<li><code>Wire.requestFrom(MPU6050_ADDRESS,2,true);</code>-send the 7-bit MPU6050 address, the 1 (read from slave) bit, and let prepare to prepare to read two bytes from the slave. This means that after the first byte is receive the master acknowledges (ACK) and not-acknowledges (NACK) after it receives the second byte. The third argument, "true", let's the master know that we want to stop the communication after we receive both bytes.</li>
+<li><code>AcX=Wire.read()<<8|Wire.read();</code>-with the method <code>Wire.read()</code> we read a byte (8-bits) received from the slave and shift them 8 bits to the left, since the first byte is the higher order byte of a 16-bit number, and then read the second byte received from the slave.</li>
+</ol>
+
+<p>Explain the last line -> bit operations</p>
+<p>When the endTransmission method sends what is stored in a queue, it does not send all of the at once exactly, but it sends the next byte only if it received an acknowledgment (ACK) from the slave. To make sure that everything I wrote here is true, take a look at the output from the oscilloscope reading the SDA and SCL line of the code block withing the loop() function.</p>
+
+<img src="images/oscilloscope.jpg" class="report-figure" style="width: 90%; padding-top: 20px; padding-bottom: 20px;">
 
 <h3>ATmega328p Code Example</h3>
 
