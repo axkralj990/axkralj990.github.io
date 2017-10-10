@@ -21,9 +21,9 @@
     <h1>I<sup>2</sup>C</h1>
 
 <h3>Introduction</h3>
-<p>I<sup>2</sup>C (pronounced I-two-C and usually written as I2C as well) is a very popular communication protocol in the world of microcontrollers. It's advantage is that it allows communication between multiple devices by using only two wires, SDA (Serial Data Line) and SCL (Serial Clock Line), unlike USART or SPI where every pair of devices needs its own set of wires. The protocol was invented by Phillips Semiconductors in 1982. The first time I encountered I2C was when I wanted to measure the orientation in space with my Arduino. For that purpose I bought an MPU6050 inertial measurement unit (IMU) that required I2C to talk to it. At first I was really confused since I had no experience with digital communication protocols except some basic understanding of USART from using Arduino Serial library. The first time I looked at an example code for reading accelerometer and gyroscope data from the MPU6050, it scared the hell out of me with ~100 lines of code consisting of nothing but a bunch of hexadecimal register addresses. This is when I realized that in order to learn anything more than just sending a "Hello World!" via serial line I would have to dedicate some more time. In this tutorial I will try to do my best to explain the principle of the I2C protocol and show an I2C example using an Arduino, ATMega328P and Raspberry Pi, but not all at once, I will start with an Arduino Uno and add examples with other devices later. For all the examples I will use the MPU6050, but you may use whichever device you desire. I will sometimes refer to Arduino and the ATmega328P, simply as ATmega328P, since this is the microcontroller on the Arduino, but I will provide an example on how to use I2C on a standalone ATmega328P chip. In terms of legal issues, I<sup>2</sup>C can be freely implemented, but in order to use the name I<sup>2</sup>C on any product, you would have to pay, so most of the products use different names for the product. For instance Atmel uses "Two-wire interface" (TWI) on they chips (ATmega328P).</p>
+<p><strong>I<sup>2</sup>C</strong> (pronounced I-two-C and most of the time also written as I2C as well) is a very popular communication protocol in the world of microcontrollers. It's advantage is that it allows communication between multiple devices by using only two wires, <strong>SDA (Serial Data Line)</strong> and <strong>SCL (Serial Clock Line)</strong>, unlike USART or SPI where every pair of devices needs its own set of wires. The protocol was invented by Phillips Semiconductors in 1982. The first time I encountered I2C was when I wanted to measure the orientation in space with my Arduino. For that purpose I bought an MPU6050 inertial measurement unit (IMU) that required I2C to talk to it. At first I was really confused since I had no experience with digital communication protocols except some basic understanding of USART from using Arduino Serial library. The first time I looked at an example code for reading accelerometer and gyroscope data from the MPU6050, the example code scared the hell out of me with of a bunch of hexadecimal register addresses. In this tutorial I will try to do my best to explain the principle of the I2C protocol and show an example using an Arduino, standalone ATMega328P chip and Raspberry Pi. I will start with an Arduino Uno and add examples with other devices later. For all the examples I will use the MPU6050, but you may use whichever device you desire. Sometimes I will refer to Arduino and the standalone ATmega328P chip, simply as ATmega328P, since this is also the microcontroller that Arduino uses, but I will provide an example on how to use I2C on a standalone ATmega328P chip in plain C as well. Just for the side note, in terms of legal issues, I<sup>2</sup>C can be freely implemented on any commercial device, but in order to use the name I<sup>2</sup>C on the product, you have to pay, so most of the products use a different name. For instance Atmel uses "Two-wire interface" (TWI) on they chips (ATmega328P).</p>
 
-<h3>Principle</h3>
+<h3>The Principle</h3>
 
 <p>To explain how the protocol works I will use an example of three human slaves, where each one monitors a different sensor and reports the reading to the one of the two masters when they request it. Slaves and masters use walkie-talkies to talk to each other. Image below shows the three slaves and two masters.</p>
 
@@ -182,7 +182,7 @@
 </li>
 </ul>
 
-<p>The devices communicating via I2C are all connected to the same set of wires, SDA (Serial Data Line) and SCL (Serial Clock Line), where all the data transfers takes place. The two wires constitute the I2C bus. As shown in the example above, I2C is a multi-master, multi-slave protocol, which means that a system of nodes (devices) can have multiple master devices and multiple slave devices. To understand what this means you need to understand what each one of them does. In a few words:</p>
+<p>The devices communicating via I2C are all connected to the same set of wires, SDA (Serial Data Line) and SCL (Serial Clock Line), where all the data transfers takes place. The two wires constitute the <strong>I2C bus</strong>. As shown in the example above, I2C is a multi-master, multi-slave protocol, which means that a system of nodes (devices) can have multiple master devices and multiple slave devices. To understand what this means you need to understand what each one of them does. In a few words:</p>
 
 <ul>
 	<li>Master Device: generates the clock and initializes the communication with a slave device</li>
@@ -252,7 +252,7 @@
 
 <p>ACK and NACK bit is transmitted by the received device, whether this is a master or the slave, right after the 8-bit from the sender are received. NACK bit is used to let the sender know that enough information was received and that the communication is about to stop or whenever an error occurred, so it can be used for error checking. This also makes I2C suitable for noise environments.</p>
 
-<p>To recap how the whole communication between a master and a slave goes, I will show it in a similar table I used in the second example, except here I will use an IMU for getting the 16-bit unsigned integer reading of the acceleration in X direction (the coordinate axis is draw on the accelerometer, this information doesn't really matter for now). Because only 8-bit number can be read from a device right now and because the IMU (as well as the ATmega328P) store the data in 8-bit registers, 16-bit numbers have to be store in two separate registers. The most significant 8 bits are stored at one location and the least significant 8-bit are stored at another location, most of the time they are in the next location from the most significant bit, so they can be read one after another. Here is the table:</p>
+<p>To recap how the whole communication between a master and a slave goes, I will show it in a similar table I used in the second example, except here I will use an IMU for getting the 16-bit signed integer reading of the acceleration in X direction (the coordinate axis is draw on the accelerometer, this information doesn't really matter for now). Because only 8-bit number can be read from a device right now and because the IMU (as well as the ATmega328P) store the data in 8-bit registers, 16-bit numbers have to be store in two separate registers. The most significant 8 bits are stored at one location and the least significant 8-bit are stored at another location, most of the time they are in the next location from the most significant bit, so they can be read one after another. Here is the table:</p>
 
 <table class="table" style="width: 80%; margin: 0 auto;">
     <thead>
@@ -339,8 +339,6 @@
     </tbody>
   </table>
 
-<p style="padding-top: 20px">Now let's see if all I said in this post is true, by looking at the oscilloscope output of SDA and SCL measurements while talking to MPU6050 with Arduino Uno. But before we can do that we have to connect the devices together and write some code.<p>
-
 <h3>Arduino Code Example</h3>
 
 <p>For this example I will use the MPU6050 IMU as well, since this is a chip I work most often with and I think it's simple enough to use it for introductory I2C example. The MPU6050 operates on 3.3 V, but the board has a voltage regulator, so it will work by connecting it to 5 V as well. The schematic for this example is shown below:</p>
@@ -366,14 +364,14 @@ int16_t AcX;
 void setup(){
   Wire.begin(); //  join the I2C bus as a master
   Wire.beginTransmission(MPU6050_ADDRESS); // begin transmission to MPU6050 (Slave)
-  Wire.write(MPU6050_RA_PWR_MGMT_1); // send the power management register address
-  Wire.write(1); // set the clock source to X-gyro (performs slightly better than the default 8 MHz)
+  Wire.write(MPU6050_RA_PWR_MGMT_1); // queue the power management register address
+  Wire.write(1); // queue the register value for the clock source to X-gyro (performs slightly better than the default 8 MHz)
   Wire.endTransmission(true); // transmits the addresses queued with Wire.write() and ends the transmission initiated by Wire.beginTransmission()
   Serial.begin(9600); // initiate a serial communication at 9600 bits/s
 }
 void loop(){
   Wire.beginTransmission(MPU6050_ADDRESS); // begin transmission to MPU6050 (Slave)
-  Wire.write(MPU6050_RA_ACCEL_XOUT_H);  // send the ACCEL_XOUT_H register
+  Wire.write(MPU6050_RA_ACCEL_XOUT_H);  // queue the ACCEL_XOUT_H register
   Wire.endTransmission(false); // send the queued ACCEL_XOUT_H register and send repeated start the "writing to slave" transmission
   Wire.requestFrom(MPU6050_ADDRESS,2,true);  // request 2 bytes from the slave 
   AcX=Wire.read()<<8|Wire.read();  // combine data from both registers, the 0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L) into one 16-bit variable  
@@ -388,28 +386,36 @@ void loop(){
 
 <p><code>Wire.beginTransmission(MPU6050_ADDRESS);</code> does what is says, it begins the transmission with the slave device, in this case the MPU6050 with the address 0x68 as defined with the MPU6050_ADDRESS macro.</p>
 
-<p>The following two lines: <code>Wire.write(MPU6050_RA_PWR_MGMT_1);</code> and <code>Wire.write(1);</code> queue ("store") the bytes to be sent to the slave device when <code>Wire.endTransmission(true)</code> is called. The input argument for the endTransmission method specifies whether to end the transmission with a <strong>Stop condition</strong> or a <strong>Repeated Start condition</strong>. The repeated start is used when we want to send a command to a device and then read the response right away. This keeps the I2C bus busy, so another master on the bus cannot interrupt the transmission. The MPU6050_RA_PWR_MGMT_1 register sets up the clock source that drives the IMU. I don't want to go into details here, I will write another post about the MPU6050. For now just remember that by setting the MPU6050_RA_PWR_MGMT_1 register to 0b00000000 (0) the MPU6050 will use its internal 8 MHz clock, by setting the register to 0b00000001 (1), it will use the X-gyroscopes clock, which was determined to be a bit more stable than the default clock. One very important thing to remember how Arduino's wire.h library works is that it queues the bytes we want to send and sends all of them when endTransmission method is called. A queue is a FIFO (First In First Out) data structure, which means that whatever we queue first, will be sent first. Let's show how this works on the code written inside the loop() function.</p>
+<p>The following two lines: <code>Wire.write(MPU6050_RA_PWR_MGMT_1);</code> and <code>Wire.write(1);</code> queue ("store") the bytes to be sent to the slave device when <code>Wire.endTransmission(true)</code> is called. The input argument for the endTransmission method specifies whether to end the transmission with a <strong>Stop condition</strong> or a <strong>Repeated Start condition</strong>. The repeated start is used when we want to send a command to a device and then read the response right away. This keeps the I2C bus busy, so another master on the bus cannot interrupt the transmission. The MPU6050_RA_PWR_MGMT_1 register sets up the clock source that drives the IMU. I don't want to go into details here, I will write another post about the MPU6050. For now just remember that by setting the MPU6050_RA_PWR_MGMT_1 register to 0b00000000 (0) the MPU6050 will use its internal 8 MHz clock, by setting the register to 0b00000001 (1), it will use the X-gyroscopes clock, which was determined to be a bit more stable than the default clock. One very important thing to remember how Arduino's wire.h library works is that it queues the bytes we want to send and sends all of them when endTransmission method is called. A queue is a <strong>FIFO (First In First Out)</strong> data structure, which means that whatever we queue first, will be sent first. Let's show how this works on the code written inside the loop() function.</p>
 
 <ol>
 <li><code>Wire.beginTransmission(MPU6050_ADDRESS);</code>-queue the 7-bit MPU6050 address - 0b1101000</li>
 <li><code>Wire.write(MPU6050_RA_ACCEL_XOUT_H);</code>-queue a 0 (write to slave) bit after the address and the register address byte we want to send to the slave</li>
 <li><code>Wire.endTransmission(false);</code>-send the two bytes queue above and send a <strong>repeated start</strong> instead of a stop conditions, because we want to receive data from the slave</li>
 <li><code>Wire.requestFrom(MPU6050_ADDRESS,2,true);</code>-send the 7-bit MPU6050 address, the 1 (read from slave) bit, and let prepare to prepare to read two bytes from the slave. This means that after the first byte is receive the master acknowledges (ACK) and not-acknowledges (NACK) after it receives the second byte. The third argument, "true", let's the master know that we want to stop the communication after we receive both bytes.</li>
-<li><code>AcX=Wire.read()<<8|Wire.read();</code>-with the method <code>Wire.read()</code> we read a byte (8-bits) received from the slave and shift them 8 bits to the left, since the first byte is the higher order byte of a 16-bit number, and then read the second byte received from the slave.</li>
+<li><code>AcX=Wire.read()<<8|Wire.read();</code>-with the method <code>Wire.read()</code> we read each byte (8-bits) of the 16-bit accelerometer measurement separately and store it in a 16-bit variable AcX. Below is a detailed explanation of this line of code.</li>
 </ol>
 
-<p>Explain the last line -> bit operations</p>
-<p>When the endTransmission method sends what is stored in a queue, it does not send all of the at once exactly, but it sends the next byte only if it received an acknowledgment (ACK) from the slave. To make sure that everything I wrote here is true, take a look at the output from the oscilloscope reading the SDA and SCL line of the code block withing the loop() function.</p>
+<p>The MPU6050 IMU uses a 16-bit <strong>analog-to-digital converted (ADC)</strong> for digitizing sensor outputs, so all the sensor readings are 16-bit signed integer values (two's complement format), but it stores the number in two 8-bit registers. The most significant byte (the high byte) is stored in one register, while the other, the least significant byte (the low byte) is stored in another register. For convenience, the MPU6050 (as well as most of other sensor devices) stores the high byte of the sensor measurement one register before the register that hold the low byte. For instance the X-Accelerometer high byte is stored in the register with the address 0x3B, while the low byte is stored at 0x3C, so by taking the advantage of ACK and NACK bits we can receive both bytes one after another. Line <code>AcX=Wire.read()<<8|Wire.read();</code> reads both, the high and the low byte one after another and does some bitwise operations to store them in the 16-bit variable AcX. These operations can be written in multiple lines of code for better clarity, such as:</p>
+
+<pre class=".pre-scrollable"><code>
+  AcX_High = Wire.read();
+  AcX_Low = Wire.read();
+  AcX = AcX_High<<8;
+  AcX = AcX|AcX_Low;
+</code></pre>
+
+<p>Where the first line stores the high byte to AcX_High 16-bit signed variable (uint16_t), the second line does the same with the low byte and stores it to AcX_Low, the third line shifts the high_byte 8-bits to the left with the <strong>bit-shift operator</strong> (left: <<, right: >>), the fourth line performs the <strong>bitwise</strong> OR operation with the AcX variable containing the shifter high byte and the AcX_Low variable containing the low byte. The bitwise OR does the OR operation between each bit of each variable. Below is a graphical representation of these operations.</p>
+
+<img src="images/I2C_bitOps.png" class="report-figure" style="width: 70%; padding-top: 10px; padding-bottom: 20px;">
+
+<p>It's important to mention that the endTransmission method sends what is stored (queued) in a queue, it does not send all of the at once exactly, but it sends the next byte only if it received an acknowledgment (ACK) from the slave. To make sure that everything I wrote here is true, take a look at the output from the oscilloscope connected to the SDA and SCL while the above program was running.</p>
 
 <img src="images/oscilloscope.jpg" class="report-figure" style="width: 90%; padding-top: 20px; padding-bottom: 20px;">
 
-<h3>ATmega328p Code Example</h3>
+<p>ATmega328p and Raspberry Pi examples coming soon...</p>
 
-<p>Coming soon...</p>
-
-<h3>Raspberry Pi Code Example</h3>
-
-<p>Coming soon...</p>
+<p>For any suggestions or improvements please feel free to contact me.</p>
 
 <p>Author: alex.kraljic@gmail.com</p>
 
