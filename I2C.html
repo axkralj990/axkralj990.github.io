@@ -407,7 +407,7 @@ void loop(){
 
 <p>Where the first line stores the high byte to AcX_High 16-bit signed variable (uint16_t), the second line does the same with the low byte and stores it to AcX_Low, the third line shifts the high_byte 8-bits to the left with the <strong>bit-shift operator</strong> (left: <<, right: >>), the fourth line performs the <strong>bitwise</strong> OR operation with the AcX variable containing the shifter high byte and the AcX_Low variable containing the low byte. The bitwise OR does the OR operation between each bit of each variable. Below is a graphical representation of these operations.</p>
 
-<img src="images/I2C_bitOps.png" class="report-figure" style="width: 70%; padding-top: 10px; padding-bottom: 20px;">
+<img src="images/I2C_bitOps.PNG" class="report-figure" style="width: 70%; padding-top: 10px; padding-bottom: 20px;">
 
 <p>It's important to mention that the endTransmission method sends what is stored (queued) in a queue, it does not send all of the at once exactly, but it sends the next byte only if it received an acknowledgment (ACK) from the slave. To make sure that everything I wrote here is true, take a look at the output from the oscilloscope connected to the SDA and SCL while the above program was running.</p>
 
