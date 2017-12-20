@@ -14,7 +14,7 @@
 </head>
 <body>
 
-	<div id="myNav" class="projects"></div>
+	<div id="myNav" class="tutorials"></div>
 
 	<div class="container" style="margin-top: 70px;">
 
@@ -414,7 +414,37 @@ void loop(){
 
 <img src="images/oscilloscope.jpg" class="report-figure" style="width: 90%; padding-top: 20px; padding-bottom: 20px;">
 
-<p>ATmega328p and Raspberry Pi examples coming soon...</p>
+<h3>Arduino Code Example</h3>
+
+<p>On Raspberry Pi you can use I2C with a language of your choice (Python, C, C++, Java, etc.), but here I will show an example with Python, since I think this is a good place to start. If you feel like using an another language, then a solid understanting of the principle of I2C should be enough to figure out the rest.</p>
+
+<p>I will assume you are using Raspbian operating system and have python 2 or 3 already installed. Otherwise you will have to install the packages yourself. To follow this tutorial you will have to install the following two packages:</p>
+
+<pre class=".pre-scrollable"><code>
+sudo apt-get install -y python-smbus
+sudo apt-get install -y i2c-tools
+</code>
+</pre>
+
+<p>After the packages have installed correctly, you have to enable I2C interface by typing <code>raspi-config</code>, then going to <strong>Interfacing Options</strong>, where you can enable I2C. More on configuring I2C can be found on <a href="https://learn.adafruit.com/adafruits-raspberry-pi-lesson-4-gpio-setup/configuring-i2c">Adafruit</a> and at <a href="https://learn.sparkfun.com/tutorials/raspberry-pi-spi-and-i2c-tutorial">Sparkfun</a>.</p>
+
+<p>To hook the MPU6050 to Raspberry Pi you can reference the following diagram:</p>
+
+<img src="images/RPi_MPU6050.png" class="report-figure" style="width: 60%; padding-top: 20px; padding-bottom: 20px;">
+
+<p>As you can see on the gpio diagram above, you need to hook SDA from MPU6050 to pin 3 and SCL to pin 5. Ground can be connected to any of the <strong>GND</strong> pins. You can power the MPU6050 from any of the 3.3 V or 5 V gpio pins on the Pi, since the MPU6050 converts the input voltage to 3.3 V, but since the chip runs on 3.3 V you might as well use this voltage.</p>
+
+<p>Now that all the packages are installed and everything is hooked up, lets see if the RPi detects the MPU6050 by running the command <code>i2cdetect -y 1</code></p>
+
+<p>Start off by creating a python file, I will name my i2cTutorial.py. Just like in the example with the arduino, I will show you the code first and then go through it line by line, so here it is:</p>
+
+<pre class=".pre-scrollable"><code>
+the code
+</code>
+</pre>
+
+
+<p>ATmega328p coming soon...</p>
 
 <p>For any suggestions or improvements please feel free to contact me.</p>
 
