@@ -27,7 +27,7 @@
 
 <p>To explain how the protocol works I will use an example with three human slaves, where each one of them monitors a different sensor and reports the reading to the one of the two masters when they request it. Slaves and masters use walkie-talkies to talk to each other. Image below shows the three slaves and two masters.</p>
 
-<img src="images/master_slave.png" class="report-figure" style="padding-bottom: 20px;">
+<img src="images/master_slave.png" class="report-figure" style="width: 30%; padding-bottom: 25px;">
 
 <p>Slave A monitors a humidity sensor, slave B a thermometer and slave C a barometer. Masters 1 or 2 can ask the slaves for readings whenever they want. In smaller microcontroller projects, you will most likely use a single master, but in order to explain the full functionality of I2C, I'm using two masters.</p> 
 
@@ -211,7 +211,7 @@
 
 <p>To give more sense to what I just explained, let's consider a real I2C example shown below.</p>
 
-<img src="images/master_slave_real.png" class="report-figure" style="width: 95%">
+<img src="images/master_slave_real.png" class="report-figure" style="width: 65%; padding-bottom: 20px;">
 
 <p>This setup uses two masters, one is an Arduino Uno used to control something and the other one is a Raspberry Pi used for storing the data to a remote database. The slaves are two MPU6050 IMUs, placed on two different spots on, for example, on a spaceship.</p>
 
@@ -226,7 +226,7 @@
 
 <p>Right after the start condition is transmitted by the master, other communication information follow. Devices decode whether the bit sent is true or false, by checking if the voltage is high or low when the clock (SCL) is high. It's easier to explain this with a simple timing diagram as shown below: (For drawing timing diagrams I use <a href="http://wavedrom.com/" target="_blank">WaveDorm</a>.)</p>
 
-<img src="images/I2C_timing.png" class="report-figure" style="width: 90%">
+<img src="images/I2C_timing.png" class="report-figure" style="width: 70%">
 
 <p>In this example I will use devices with 7-bit addresses, slave A has the address (68)<sub>16</sub> and slave B the address (69)<sub>16</sub>. In order to address the right slave, its address has to be sent in binary right after the start bit. For example, to address the (68)<sub>16</sub> MPU6050, (1101000)<sub>2</sub> has to be sent.</p>
 
@@ -344,7 +344,7 @@
 
 <p>For this example I will use the MPU6050 IMU as well, since this is a chip I work most often with and I think it's simple enough to use it for introductory I2C example. The MPU6050 operates on 3.3 V, but the board has a voltage regulator, so it will work by connecting it to 5 V as well. The schematic for this example is shown below:</p>
 
-<img src="images/arduinoExample.png" class="report-figure" style="width: 50%; padding-top: 20px; padding-bottom: 20px;">
+<img src="images/arduinoExample.png" class="report-figure" style="width: 30%; padding-top: 20px; padding-bottom: 20px;">
 
 <p>The Vcc pin on the MPU6050 is connected to 5 V on the Arduino. Grounds (GND) are connected together. SCL and SDA pins on the MPU6050 are connected to SCL and SDA on the Arduino, SCL is connected to pin A5 and SDA is to pin A4. AD0 pin on the MPU6050 is connected to the ground, the AD0 pin is the  "device address select" pin, since if connected to the ground, MPU6050's address is (68)<sub>16</sub>, if connected to Vcc, its address is (69)<sub>16</sub>. This makes it possible to use two MPU6050s on the same I2C bus.</p>
 
@@ -408,41 +408,85 @@ void loop(){
 
 <p>The first line stores the high byte to AcX_High 16-bit signed variable (int16_t), the second line does the same with the low byte and stores it to AcX_Low, the third line shifts the high byte 8-bits to the left with the <strong>bit-shift operator</strong> (left: <<, right: >>), the fourth line performs the <strong>bitwise</strong> OR operation with the AcX variable containing the shifted high byte and the AcX_Low variable containing the low byte. The bitwise OR does the OR operation between each bit. Below is a graphical representation of these operations.</p>
 
-<img src="images/I2C_bitOps.PNG" class="report-figure" style="width: 70%; padding-top: 10px; padding-bottom: 20px;">
+<img src="images/I2C_bitOps.PNG" class="report-figure" style="width: 50%; padding-top: 10px; padding-bottom: 20px;">
 
 <p>It's important to mention that the endTransmission method sends what is stored (queued) in a queue, it does not send all of it at once, but it sends the next byte only if it received an acknowledgment (ACK) from the slave. To make sure that everything I wrote here is true, take a look at the output from the oscilloscope connected to the SDA and SCL while the above program was running. I will leave it to you to make sense of the oscilloscope output.</p>
 
-<img src="images/oscilloscope.jpg" class="report-figure" style="width: 90%; padding-top: 20px; padding-bottom: 20px;">
+<img src="images/oscilloscope.jpg" class="report-figure" style="width: 70%; padding-top: 20px; padding-bottom: 20px;">
 
-<h3>Arduino Code Example</h3>
+<h3>Raspberry Pi Example</h3>
 
-<p>On Raspberry Pi you can use I2C with a language of your choice (Python, C, C++, Java, etc.), but here I will show an example with Python, since I think this is a good place to start. If you feel like using an another language, then a solid understanting of the principle of I2C should be enough to figure out the rest.</p>
+<p>On Raspberry Pi you can use I2C with a language of your choice (Python, C, C++, Java, etc.), but here I will show an example with Python, since I think this is a good place to start. If you feel like using another language, then a solid understanting of the principle of I2C should be enough to figure out the rest.</p>
 
-<p>I will assume you are using Raspbian operating system and have python 2 or 3 already installed. Otherwise you will have to install the packages yourself. To follow this tutorial you will have to install the following two packages:</p>
+<p>I will assume you are using Raspberry Pi 3 with the Raspbian operating system and have python 2 or 3 already installed. To follow this install the following two packages:</p>
 
 <pre class=".pre-scrollable"><code>
 sudo apt-get install -y python-smbus
 sudo apt-get install -y i2c-tools
+sudo apt-get install build-essential libi2c-dev i2c-tools python-dev libffi-dev
 </code>
 </pre>
 
-<p>After the packages have installed correctly, you have to enable I2C interface by typing <code>raspi-config</code>, then going to <strong>Interfacing Options</strong>, where you can enable I2C. More on configuring I2C can be found on <a href="https://learn.adafruit.com/adafruits-raspberry-pi-lesson-4-gpio-setup/configuring-i2c">Adafruit</a> and at <a href="https://learn.sparkfun.com/tutorials/raspberry-pi-spi-and-i2c-tutorial">Sparkfun</a>.</p>
+<p>SMBus (System Management Bus) is a two-wire protocol that can be thought of as a subset of I2C and is very common in computer motherboards. The principle is pretty much the same as in I2C, but there are some differencies that should be considered. I will not go into detail here, but you should familiarize yourself if you will be working on a project, where I2C and SMBus devices will be sharing the same bus. For more information consider <a href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/Documentation/i2c/smbus-protocol">SMBus documentation</a></p>
+
+<p>After all the packages have installed correctly, you have to enable I2C interface by typing <code>raspi-config</code>, then going to <strong>Interfacing Options</strong>, where you can enable I2C. More on configuring I2C can be found on <a href="https://learn.adafruit.com/adafruits-raspberry-pi-lesson-4-gpio-setup/configuring-i2c">Adafruit</a> and at <a href="https://learn.sparkfun.com/tutorials/raspberry-pi-spi-and-i2c-tutorial">Sparkfun</a>.</p>
 
 <p>To hook the MPU6050 to Raspberry Pi you can reference the following diagram:</p>
 
-<img src="images/RPi_MPU6050.png" class="report-figure" style="width: 60%; padding-top: 20px; padding-bottom: 20px;">
+<img src="images/RPi_MPU6050.png" class="report-figure" style="width: 50%; padding-top: 20px; padding-bottom: 20px;">
 
 <p>As you can see on the gpio diagram above, you need to hook SDA from MPU6050 to pin 3 and SCL to pin 5. Ground can be connected to any of the <strong>GND</strong> pins. You can power the MPU6050 from any of the 3.3 V or 5 V gpio pins on the Pi, since the MPU6050 converts the input voltage to 3.3 V, but since the chip runs on 3.3 V you might as well use this voltage.</p>
 
-<p>Now that all the packages are installed and everything is hooked up, lets see if the RPi detects the MPU6050 by running the command <code>i2cdetect -y 1</code></p>
-
-<p>Start off by creating a python file, I will name my i2cTutorial.py. Just like in the example with the arduino, I will show you the code first and then go through it line by line, so here it is:</p>
+<p>Now that all the packages are installed and everything is hooked up, lets see if the RPi detects the MPU6050 by running the command <code>i2cdetect -y 1</code>. The output of the command should look similar to this:</p>
 
 <pre class=".pre-scrollable"><code>
-the code
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:          -- -- -- -- -- -- -- -- -- -- -- -- --
+10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+60: -- -- -- -- -- -- -- -- 68 -- -- -- -- -- -- --
+70: -- -- -- -- -- -- -- --
 </code>
 </pre>
 
+<p>where you can see all the devices that were detected on the bus. You can see that in my case it detected a device with an address 68, which corresponds to the MPU6050.</p>
+  
+<p>Start off by creating a python file, I will name my i2cTutorial.py. Just like in the example with the arduino, I will show you the code first and then go through it line by line, so here it is:</p>
+
+<pre class=".pre-scrollable"><code>
+import smbus
+import time
+
+bus = smbus.SMBus(1) # set 1 for /dev/i2c-1 I2C1
+
+DEVICE_ADDRESS = 0x68 # MPU6050 7-bit address
+PWR_MGMT_1 = 0x6B # power management register address
+ACCEL_XOUT_H = 0x3B # accelerometer high byte register address
+
+# Write a single register to set to clock source to X-gyro
+bus.write_byte_data(DEVICE_ADDRESS, PWR_MGMT_1, 1)
+
+while True:
+    receivedBlock = bus.read_i2c_block_data(DEVICE_ADDRESS, ACCEL_XOUT_H, 2)
+
+    if receivedBlock[0] > 127:
+    	receivedBlock[0] = (256-receivedBlock[0])*(-1)
+
+    accelX = (receivedBlock[0]<<8)|receivedBlock[1]
+
+    print("AcX = " + accelX)
+    time.sleep(0.01)
+</code>
+</pre>
+
+<p>Before going into the code description, I briefly explain I2C-0 and I2C-1 on the 40-pin Raspberry Pi gpio pins. If you look at the pinout digram above, you will see that pins 3 and 5 are SDA1 and SCL1 respectivelly. The number 1 at the end means that these two line consist the I2C-1 bus, which is the one used in this example. If you look at pins 27 and 28, you will notice that these two are also I2C data and clock lines, except that these two are specifically used for talkin to EEPROM chips and nothing else (unless you reconfigure you Pi). It is commonly used to initialize Raspberry Pi hats at startup. I will show you shortly why this information is important. More info on this can be found <a  href="https://learn.sparkfun.com/tutorials/raspberry-pi-spi-and-i2c-tutorial/i2c-0-on-40-pin-pi-boards">here</a>.</p>
+
+<p>The first two lines of the code <code>import smbus</code> and <code>import time</code> are used to import the smbus module and time module, which is just add some delay in the loop that reads and prints the data to the terminal. Next we have to create a <strong>bus object</strong> from the smbus class: <code>bus = smbus.SMBus(1)</code>. The argument <strong>1</strong> means that we will be using the I2C-1 as described in the previous paragraph. Following 3 lines are just variables containig the MPU6050 7-bit address, the power management 1 register address and the high byte of the accelerometer reading address. Just like with the example with the Arduino we will set the clock source of the MPU6050 to X-gyro by writing a single byte, a number 1<sub>10</sub>, or 0b00000001 to the power management 1 register with the method <code>bus.write_byte_data(DEVICE_ADDRESS, PWR_MGMT_1, 1)</code></p>
+
+<p>After this I created an infinite while loop, so to terminite the program you will have to press <strong>ctr+c</strong>. In each loop iteration we will read 2 bytes from the MPU6050, the high and the low byte of the acceleration in the X-direction with the method <code>receivedBlock = bus.read_i2c_block_data(DEVICE_ADDRESS, ACCEL_XOUT_H, 2)</code>. The <code>read_i2c_block_data()</code> method return an array with as many element as the bytes that it read, so in the next step we will have to do some bit twidling just like we did in the Arduino example above in order to get a 16-bit signed integer value of the reading. -></p>
 
 <p>ATmega328p coming soon...</p>
 
