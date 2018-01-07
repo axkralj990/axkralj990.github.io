@@ -39,14 +39,14 @@ x.innerHTML =
                             '<ul class="dropdown-menu">'+
                                 '<li><a href="I2C.html">I<sup>2</sup>C</a></li>'+
                                 '<li><a href="MPU6050.html">MPU6050</a></li>'+
-				'<li><a href="tictoc.html">Measuring Time on AVRs</a></li>'+
-                                '<li><a href="MRI.html">MRI</a></li>'+
                             '</ul>'+
                         '</li>'+
                     	'<li class="dropdown ' + activateProjects + '">'+
                     		'<a href="#" class="dropdown-toggle" data-toggle="dropdown">Projects<span class="caret"></span></a>'+
                         	'<ul class="dropdown-menu">'+
-                        		'<li><a href="quad.html">ATmega Quadcopter</a></li>'+
+                        		'<li><a href="quad.html">Quadcopter</a></li>'+
+                                '<li><a href="#">Seismocardiography</a></li>'+
+                                '<li><a href="#">Lego Train Dynamics</a></li>'+
                    			    '<li><a href="SGM.html">Serial Grahing Monitor</a></li>'+
                         	'</ul>'+
                     	'</li>'+
