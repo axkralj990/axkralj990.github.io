@@ -39,6 +39,7 @@ x.innerHTML =
                             '<ul class="dropdown-menu">'+
                                 '<li><a href="I2C.html">I<sup>2</sup>C</a></li>'+
                                 '<li><a href="MPU6050.html">MPU6050</a></li>'+
+	                        '<li><a href="MPU6050.html">Filters</a></li>'+
                             '</ul>'+
                         '</li>'+
                     	'<li class="dropdown ' + activateProjects + '">'+
