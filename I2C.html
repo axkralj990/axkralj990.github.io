@@ -178,7 +178,7 @@
   <li>basic electronics</li>
   <li>basic C (or Arduino dialect)</li>
   <li>the difference between binary, decimal, hexadecimal, ...</li>
-  <li>what registers are (at least know that a register is a memory slot where data or instructions are stored, in ATmega328P a register can hold 8 bits (1 byte)).
+  <li>what registers are (at least know that a register is a memory slot where data or instructions are stored, in ATmega328P, and other smaller I2C slave devices, registers hold 8 bits (1 byte)).
 </li>
 </ul>
 
@@ -209,7 +209,7 @@
 
 <h3>Example with Digital Devices</h3>
 
-<p>To give more sense to what I just explained, let's consider a real I2C example shown below.</p>
+<p>To give more sense to what I have just explained, let's consider a real I2C example shown below.</p>
 
 <img src="images/master_slave_real.png" class="report-figure" style="width: 65%; padding-bottom: 20px;">
 
@@ -340,6 +340,35 @@
     </tbody>
   </table>
 
+<h4>Reading to Slave Devices</h4>
+
+<p>Whenever we are writing or reading from a slave device we are working with the data stored in registers. Think of a register as 8 slots that can hold a 1 or a 0, as shown on the image below.</p>
+
+<img src="images/basic_register_1.png" class="report-figure" style="width: 25%; padding-bottom: 20px;">
+
+<p>Just like the device addresses explained earlier, register addresses will also be written in hexadecimal most of the time. In order to get a value stored in a register located at the address 0x01, this address has to be sent first. After the slave acknowledges the address, it sends the register's content right after. Then if the master acknowledges (ACK), the slaves sends the content of the next register, in this example register 0x02, and it keep sending the data of each following register up until the master not-acknowledges (NACK).</p>
+
+<h4>Writing to Slave Devices</h4>
+
+<p>Writing is just slightly different then reading and it usually requires an extra step, since sometimes we just want to change a specific bit of a register, not all 8 bits. For instance if we wanted to set a bit (change to 1) at the bit number 4 and clear a bit (change to 0) at the bit number 3 in the register shown above, we would have to write a register value of (00010101)<sub>2</sub> to the address 0x01. In order to do that we first have to read the current value of the register (all 8 bits) and then modify just the two bits at locations 3 and 4. This is usually done with bitwise operators that depend on the programming language that is used. Here I will show you how this is done in C, and I expect that you know some basic Boolean algebra to figure the logic out (and logic stuff is fun for figuring out).</p>
+
+<h5>Setting a bit at the location x:</h5>
+<pre class=".pre-scrollable"><code>
+registerData |= 1 << x;
+</code></pre>
+
+<h5>Clearing a bit at the location x:</h5>
+<pre class=".pre-scrollable"><code>
+registerData &= ~(1 << x);
+</code></pre>
+
+<h5>Toggling a bit at the location x:</h5>
+<pre class=".pre-scrollable"><code>
+registerData ^= 1 << x;
+</code></pre>
+
+<p>Another important thing to note about writing to slave is that you cannot use the same fancy thing about writing to each consecutive register like when reading from the slave. When writing to a register we first send a start condition, slave's address, the direction bit, register's address that we want to write to and then the data followed by the stop condition. If we want to write data to the next register we have to repeat the whole sequence again by using the new register's address.</p>
+
 <p>Now let's do some examples with the real hardware. I recommend you to go through all of the examples even if you don't use the specific device or the language used in the example. Focus on the general information related to I2C that I provide, since you might find it useful later in the future. In the first example, with the Arduino Uno, I will also show the oscilloscope output and analyze it.</p>
 		
 <h3>Arduino Example</h3>
@@ -415,6 +444,8 @@ void loop(){
 <p>It's important to mention that the endTransmission method sends what is stored (queued) in a queue, it does not send all of it at once, but it sends the next byte only if it received an acknowledgment (ACK) from the slave. To make sure that everything I wrote here is true, take a look at the output from the oscilloscope connected to the SDA and SCL while the above program was running. I will leave it to you to make sense of the oscilloscope output.</p>
 
 <img src="images/oscilloscope.jpg" class="report-figure" style="width: 70%; padding-top: 20px; padding-bottom: 20px;">
+
+<p>I think it is important to write a few programs "from scratch" like we did in this example in order to gain a deeper understanding, but for larger programs I would recommend using the <a href="https://github.com/jrowberg/i2cdevlib">i2cdevlib</a> by jrowberg. The i2cdev is a large library package with many contributors. It takes has many useful functions, for instance a function for writing only a specific bit, etc. The package also contains libraries for many i2c devices. I would encourage you to go through the source code of the I2Cdev.cpp for the Arduino and try to understand what is going on.</p>
 
 <h3>Raspberry Pi Example</h3>
 
