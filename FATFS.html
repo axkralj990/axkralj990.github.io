@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>axkralj990</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="AK_stylesheet.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Orbitron">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto Condensed">
+</head>
+<body>
+
+	<div id="myNav" class="tutorials"></div>
+
+	<div class="container" style="margin-top: 70px;">
+
+    <h1>SD Card Logging on ATmega328P</h1>
+
+<h3>Introduction</h3>
+<p>One day when looking for something in my room I ran into a box with my old Legos. I'm have to admit that I have already somehow forgotten about them, so I was very surprised. In the box I found a Lego electric train set, which was probably one of my most favorite toys. I even used it in high school to do some basic physics calculations on it, just to make sure that what the teacher was saying was true. Speaking of which, I have to find the notebook where I was writing the measurements in. From what I remember, I was measuring the speed, acceleration, centripetal force from the turn radius, and also put the train on an incline to test whether the equations we learned in physics worked. This time, though, I got a similar idea, except that now I want to use a microcontroller with and IMU (Inertial Measurement Unit), a circuit board with an accelerometer and a gyroscope. This way I'll be able conduct a much better experiment as I did back at high school. But up until now I have never used a microcontroller without a connection to the computer, so all the data I've ever collected was being sent to my computer via serial communication.</p>
+
+<p>The microcontroller such as the ATmega328 (the chip on the Arduino Uno) already has three different types of memory, these are:</p>
+
+<ul>
+<li>32KB of Flash: which can only be used for constant data storage at the compile time (when the microcontroller is "flashed").</li>
+<li>2048 Bytes of RAM: the main working memory of the chip, very fast writing and reading, but not enough to really log any data.</li>
+<li>1024 Bytes of EEPROM: can be used while the program is running, but it is also very sparse for data logging purposes. You also have to keep in mind that the EEPROM is rated for 100,000 erase/write cycles, which seems a lot, but it can become a real concern if you are using very fast data logging.</li>
+</ul>
+
+<p>For logging the IMU data on my Lego train set, I initially assumed that I would need at least 100 Hz sampling frequency, so one sample every 10 milliseconds. If I only wanted to measure the acceleration, one time sample would consist of three 16-bit acceleration values (one for each of the axis, X, Y and Z), so 48 bits, or 6 bytes of data per 10 milliseconds. In a 1 minute data acquisition this would require 36 kilobytes of memory and the only solution I could think of right away was to implement an SD card logger. Of course there are also other solutions, the best one, and the one that should be done if this was not only for learning purposes, would be to buy a microcontroller specifically for this purpose. Other solutions I could think of were implementing an separate SRAM chip with more memory and send the data to the computer after the experiment is finished. But the SD card was still a preferred solution, because it could be used for other, longer, experiments as well, can be read by the computer, and is a non-volatile memory, so it keeps the information even when it looses power, whereas SRAM is volatile and it would have to be powered until the data would be transmitted to another memory.</p>
+
+<p>SD cards also have their own drawbacks. The main one for me was that SD cards are its own microcontrollers so the time it takes to write to them is not really under my control. You can also send it or read from it data in chunks of a sector size, which is usually 512 bytes large. This requires the data on the master microcontroller to be stored in a 512-byte buffer and then sent to the SD. The microcontroller communicates with the SD card via SPI (Serial Peripheral Interface), which can transfer the data very fast, but as I said earlier, the SD is a separate microcontroller and can at times be busy performing various tasks when it receives the data. These tasks can sometimes take longer than 100 milliseconds and this add a requirement to implement another 512-byte buffer to store the data to while the SD card is busy writing the data from the first buffer. This will also be the program design I used for my examples. The memory on the SD cards is usually formated as FAT (File Allocation Table), so to really understand how to use and SD card for a project, you should get familiarized with the basics of FAT and SD cards in general. I will just write some basics on these page, but much more valuable information can be found <a href="http://codeandlife.com/2012/04/02/simple-fat-and-sd-tutorial-part-1/" target="_blank">here</a> and <a href="https://www.compuphase.com/mbr_fat.htm" target="_blank">here</a>. I spent quite some time digging around an SD card image with <a href="https://mh-nexus.de/en/hxd/" target="_blank">HxD (Freeware Hex Editor and Disk Editor)</a> and I would advise you the same, if it is your first time learning the details about SD cards. Thankfully there is <a href="http://elm-chan.org/fsw/ff/00index_p.html" target="_blank">Chan's Petit FatFs</a> library for interfacing SD cards with small microcontrollers, such as the ATmega328 and even smaller ATtinys. Writing your own library can be much more helpful with the learning process, but for larger projects I would advise you to use the library, since it already has a large community behind it, and this is what I did.</p>
+
+
+<h3>SPI</h3>
+<p></p>
+
+<h3>SD cards</h3>
+<p></p>
+
+<h3>FAT and Petit FatFs</h3>
+<p></p>
+
+<h3>Logging Algorithm</h3>
+<p></p>
+
+<h3>Python Data Decoder</h3>
+<p></p>
+
+<img src="images/master_slave.png" class="report-figure" style="width: 30%; padding-bottom: 25px;">
+
+<h3>Sources (recommended reading)</h3>
+		
+<p>http://codeandlife.com/2012/04/02/simple-fat-and-sd-tutorial-part-1/</p>
+<p>https://www.compuphase.com/mbr_fat.htm</p>
+		
+<p>For any suggestions or improvements please feel free to contact me.</p>
+
+<p>Author: alex.kraljic@gmail.com</p>
+
+<!--</div>-->
+	<hr>
+      <footer>
+        <p>&copy; 2017 Aleksij Kraljic <i class="fa fa-space-shuttle"></i></p>
+      </footer>
+    </div> <!-- /container -->
+    <script src="myNavbar.js"></script>
+</body>
+</html>
