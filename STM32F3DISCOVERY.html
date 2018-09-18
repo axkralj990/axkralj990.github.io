@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>axkralj990</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="AK_stylesheet.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Orbitron">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto Condensed">
+</head>
+<body>
+
+	<div id="myNav" class="tutorials"></div>
+
+	<div class="container" style="margin-top: 70px;">
+
+    <h1>STM32F3 Discovery</h1>
+
+<h3>Introduction</h3>
+
+<p>Here I will write about all the important steps on setting up and learning the basics of programming the STM32F3 Discovery board. For now I will use this page as my notebook, so the content won't be too organized. Just like many other people, my first interaction with microcontrollers was with the Arduino Uno back when I was an undergrad. As fun as it was, I was intimidated by all the levels of abstraction when writing code for it and I wanted to find out what was hiding behind the super-user-friendly interface. Luckyly enough, I was introduced to the ATMega328P microcontroller in my first semester of master's program. This is the same chip that the Arduino uses, but we were finally interacting directly with the registers on the processor, which satisfied my concers and became much more fun to work with.</p>
+
+<p>While working with the ATMega328P I learned many important concepts that apply to almost all microcontrollers, for instace, how to flash the firmware, interrupts, timers, I2C, SPI, USART, etc. When talking to other, more experienced programmers, almost all told me to learn ARM because that's where it's all at, because these microcontrollers have a state of art architecture and also more jobs for embedded systems engineers today require ARM experience. I was also told that one of the best ways to start with the new chip by using a development board, so I decided to buy the STM32F3 Discovery board that has the ARM Cortex-M4 architecture, an integrated ST-Link debugger and a 9-DOF IMU (accelerometer, gyro and compass). This setup seemed perfect for me, since I really enjoy working with IMUs, but also the Cortex-M4 has an expanded instruction set for DSP, which is what I do on everyday basis (at a higher level on a much faster machine) and it's something I enjoy the most in engineering.</p>
+
+<h3>Installation on OSX</h3>
+
+<p>At the moment I am using a Macbook pro, so I will write a quick quide on how to install the required software to program the board. Here's the list of things that need to be installed:</p>
+
+<ul>
+    <li>GNU Tools for ARM Embedded Processors</li>
+    <li>Eclipse IDE for C/C++</li>
+    <li>Eclipse CDT and GNU ARM Eclipse plugins</li>
+    <li>OpenOCD</li>
+</ul>
+
+<h4>GNU Tools for ARM Embedded Processors</h4>
+<p>GNU Tools for ARM Embedded Processors is a toolchain. It includes the GCC ARM compiler and GDB debugger.</p>
+
+<h4>Eclipse IDE</h4>
+<p>Download the latest version of Eclipse for C/C++</p>
+
+<h4>Eclipse CDT and GNU ARM Eclipse plugins</h4>
+<p>Install the Eclipse CDT (C/C++ Development Tooling) and GNU ARM EMbedded Processors.</p>
+
+<h4>OpenOCD</h4>
+<p>OpenOCD (Open On-Chip Debugger) is used to acces the on-board ST-Link debugger.</p>
+
+<p>The command I ran "/Users/alexkraljic/opt/gnu-mcu-eclipse/openocd/0.10.0-8-20180512-1921/bin/openocd -f board/stm32f3discovery.cfg -c "program /Users/alexkraljic/eclipse-workspace/discoveryTest1/Debug/discoveryTest1.elf verify reset exit"</p>
+
+<h3>Development Board Layout</h3>
+
+<img src="images/discoveryImage.png" class="report-figure" style="width: 30%; padding-bottom: 25px;">
+
+<img src="images/discoveryLayout.png" class="report-figure" style="width: 30%; padding-bottom: 25px;">
+
+<h3>Resources</h3>
+<ol>
+    <li><a href="https://www.st.com/content/ccc/resource/technical/document/user_manual/8a/56/97/63/8d/56/41/73/DM00063382.pdf/files/DM00063382.pdf/jcr:content/translations/en.DM00063382.pdf">User Manual: Discovery kit with STM32F303VC MCU</a></li>
+    <li><a href="https://community.arm.com/processors/b/blog/posts/white-paper-cortex-m-for-beginners-an-overview-of-the-arm-cortex-m-processor-family-and-comparison">White Paper: Cortex-M for Beginners</a></li>
+    <li><a href="https://community.arm.com/processors/b/blog/posts/getting-started-with-arm-microcontroller-resources">Getting started with Arm Microcontroller Resources</a></li>
+    <li><a href="https://gnu-mcu-eclipse.github.io/">GNU MCU Eclipse</a></li>
+    <li><a href="http://www.davidrojas.co.uk/stm32f3discovery-on-mac-os-x-using-eclipse-gcc-arm-and-openocd/">David Rojas STM32F3DISCOVERY on Mac OS X using Eclipse, GCC ARM and OpenOCD</a></li>
+    <li><a href="https://gctechspace.org/2014/09/getting-to-blinky-with-the-stm32-and-ubuntu-linux/">Getting to Blinky with the STM32 and Ubuntu Linux!</a></li>
+    <li><a href="https://azeria-labs.com/writing-arm-assembly-part-1/">INTRODUCTION TO ARM ASSEMBLY BASICS</a></li>
+    <li>http://vedder.se/2012/12/debugging-the-stm32f4-using-openocd-gdb-and-eclipse/</li>
+    <li>https://electronics.stackexchange.com/questions/226383/gnu-arm-eclipse-flash-and-run-without-debug</li>
+    <li>http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0471g/Bgbjjgij.html</li>
+</ol>
+
+<p>Author: alex.kraljic@gmail.com</p>
+
+<!--</div>-->
+	<hr>
+      <footer>
+        <p>&copy; 2017 Aleksij Kraljic <i class="fa fa-space-shuttle"></i></p>
+      </footer>
+    </div> <!-- /container -->
+    <script src="myNavbar.js"></script>
+</body>
+</html>
