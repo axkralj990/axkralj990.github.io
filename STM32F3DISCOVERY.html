@@ -24,7 +24,7 @@
 
 <p>Here I will write about all the important steps on setting up and learning the basics of programming the STM32F3 Discovery board. For now I will use this page as my notebook, so the content won't be too organized. Just like many other people, my first interaction with microcontrollers was with the Arduino Uno back when I was an undergrad. As fun as it was, I was intimidated by all the levels of abstraction when writing code for it and I wanted to find out what was hiding behind the super-user-friendly interface. Luckyly enough, I was introduced to the ATMega328P microcontroller in my first semester of master's program. This is the same chip that the Arduino uses, but we were finally interacting directly with the registers on the processor, which satisfied my concers and became much more fun to work with.</p>
 
-<p>While working with the ATMega328P I learned many important concepts that apply to almost all microcontrollers, for instace, how to flash the firmware, interrupts, timers, I2C, SPI, USART, etc. When talking to other, more experienced programmers, almost all told me to learn ARM because that's where it's all at, because these microcontrollers have a state of art architecture and also more jobs for embedded systems engineers today require ARM experience. I was also told that one of the best ways to start with the new chip by using a development board, so I decided to buy the STM32F3 Discovery board that has the ARM Cortex-M4 architecture, an integrated ST-Link debugger and a 9-DOF IMU (accelerometer, gyro and compass). This setup seemed perfect for me, since I really enjoy working with IMUs, but also the Cortex-M4 has an expanded instruction set for DSP, which is what I do on everyday basis (at a higher level on a much faster machine) and it's something I enjoy the most in engineering.</p>
+<p>While working with the ATMega328P I learned many important concepts that apply to almost all microcontrollers, for instace, how to flash the firmware, use interrupts, timers, I2C, SPI, USART, etc. When talking to other, more experienced programmers, they all told me to learn ARM because that's where it's all at, because these microcontrollers have a state of art architecture and also more jobs for embedded systems engineers today require ARM experience. To keep things a bit simpler for the beginning, I decided to buy the STM32F3 Discovery board that has the ARM Cortex-M4 architecture, an integrated ST-Link debugger and a 9-DOF IMU (accelerometer, gyro and compass). This setup seemed perfect for me, since I really enjoy working with IMUs and I liked the fact that the Cortex-M4 has an expanded instruction set for digital signal processing (DSP), which is what I do on everyday basis (at a higher level on a much faster machine) and it's something I enjoy the most in engineering.</p>
 
 <h3>Installation on OSX</h3>
 
@@ -49,7 +49,10 @@
 <h4>OpenOCD</h4>
 <p>OpenOCD (Open On-Chip Debugger) is used to acces the on-board ST-Link debugger.</p>
 
-<p>The command I ran "/Users/alexkraljic/opt/gnu-mcu-eclipse/openocd/0.10.0-8-20180512-1921/bin/openocd -f board/stm32f3discovery.cfg -c "program /Users/alexkraljic/eclipse-workspace/discoveryTest1/Debug/discoveryTest1.elf verify reset exit"</p>
+<p>The command I ran </p>
+<code>
+openocd -f board/stm32f3discovery.cfg -c "program firmware.elf verify reset exit"
+</code>
 
 <h3>Development Board Layout</h3>
 
@@ -57,9 +60,85 @@
 
 <img src="images/discoveryLayout.png" class="report-figure" style="width: 30%; padding-bottom: 25px;">
 
+<h3>Testing OpenOCD</h3>
+
+<p>I tested the OpenOCD without really knowing how it works. I started by adding the path to the executable <code>openocd</code> to my $PATH environmental variable. Then I ran:</p>
+
+<code>openocd -f board/stm32f3discovery.cfg</code>
+
+<p>The line above start the openocd deamon for the specified board configuration file (-f == --file). Since the openocd runs as a deamon, it only accepts connections from other programs and cannot receive commands directly. For this purpose I connected to openocd with telnet from another terminal as shown below.</p>
+
+<code>telnet localhost 4444</code>
+
+<p>When openocd is ran, it outputs the port at which it is listening and it is usually port 4444. You might have to run the line above as sudo. Once you connect to openocd you see a single prompt (>) where you can input openocd commmands.</p>
+
+<p>First command I tried was to halt the targate and look into it's core registers by first typing <code>> halt</code> and then <code>> reg</code>. Output looked like this:</p>
+
+<pre><code>
+> halt
+target halted due to debug-request, current mode: Thread
+xPSR: 0x21000000 pc: 0x08000abc msp: 0x20009fe0
+> reg
+===== arm v7m registers
+(0) r0 (/32): 0x000002EE
+(1) r1 (/32): 0x00001000
+(2) r2 (/32): 0x00000000
+(3) r3 (/32): 0x000001B5
+(4) r4 (/32): 0x00000367
+(5) r5 (/32): 0x00000000
+(6) r6 (/32): 0x00000000
+(7) r7 (/32): 0x00000000
+(8) r8 (/32): 0x00000000
+(9) r9 (/32): 0x00000000
+(10) r10 (/32): 0x00000000
+(11) r11 (/32): 0x00000000
+(12) r12 (/32): 0x00000000
+(13) sp (/32): 0x20009FE0
+(14) lr (/32): 0x08000B2F
+(15) pc (/32): 0x08000ABC
+(16) xPSR (/32): 0x21000000
+(17) msp (/32): 0x20009FE0
+(18) psp (/32): 0x00000000
+(19) primask (/1): 0x00
+(20) basepri (/8): 0x00
+(21) faultmask (/1): 0x00
+(22) control (/2): 0x00
+(23) d0 (/64): 0x0000000000000000
+(24) d1 (/64): 0x0000000000000000
+(25) d2 (/64): 0x0000000000000000
+(26) d3 (/64): 0x0000000000000000
+(27) d4 (/64): 0x0000000000000000
+(28) d5 (/64): 0x0000000000000000
+(29) d6 (/64): 0x0000000000000000
+(30) d7 (/64): 0x0000000000000000
+(31) d8 (/64): 0x0000000000000000
+(32) d9 (/64): 0x0000000000000000
+(33) d10 (/64): 0x0000000000000000
+(34) d11 (/64): 0x0000000000000000
+(35) d12 (/64): 0x0000000000000000
+(36) d13 (/64): 0x0000000000000000
+(37) d14 (/64): 0x0000000000000000
+(38) d15 (/64): 0x0000000000000000
+(39) fpscr (/32): 0x00000000
+===== Cortex-M DWT registers
+</code></pre>
+
+<p>Target can be then resumed by running <code>> resume</code>, but since it contains some breakpoints (I don't know where exaclty yet), it halts again soon after resuming. Here is the output:</p>
+
+<pre><code>
+> resume
+target halted due to breakpoint, current mode: Thread
+xPSR: 0x21000000 pc: 0x08000710 msp: 0x20009f88
+</code></pre>
+
+<p>An image can be written to flash with the command <code>program program.elf verify reset exit</code> or <code>program program.bin [address] verify reset exit</code>. The verify reset exit commands are optional (I will have to read more on that). When writing binary images to flash, the address has to be provided as well. This is not required when passing the Executable and Linkable Format (.elf) file, since it already contains the address of the entry point from where the process starts, as well as all other imporant infomation. <a href="https://en.wikipedia.org/wiki/Executable_and_Linkable_Format" target="_blank">More about .elf on Wiki.</a></p>
+
 <h3>Resources</h3>
 <ol>
-    <li><a href="https://www.st.com/content/ccc/resource/technical/document/user_manual/8a/56/97/63/8d/56/41/73/DM00063382.pdf/files/DM00063382.pdf/jcr:content/translations/en.DM00063382.pdf">User Manual: Discovery kit with STM32F303VC MCU</a></li>
+    <li><a href="https://www.st.com/content/ccc/resource/technical/document/programming_manual/6c/3a/cb/e7/e4/ea/44/9b/DM00046982.pdf/files/DM00046982.pdf/jcr:content/translations/en.DM00046982.pdf">STM32F3 Series Programming manual</a></li>
+    <li><a href="https://www.st.com/content/ccc/resource/technical/document/reference_manual/4a/19/6e/18/9d/92/43/32/DM00043574.pdf/files/DM00043574.pdf/jcr:content/translations/en.DM00043574.pdf">STM32F3 Reference Manual</a></li>
+    <li><a href="https://www.st.com/content/ccc/resource/technical/document/user_manual/8a/56/97/63/8d/56/41/73/DM00063382.pdf/files/DM00063382.pdf/jcr:content/translations/en.DM00063382.pdf">User Manual for Discovery kit with STM32F303VC MCU</a></li>
+    <li><a href="https://www.youtube.com/watch?v=15z_vn4H41U">Awesome tutorials by JoeTheProfessor</a></li>
     <li><a href="https://community.arm.com/processors/b/blog/posts/white-paper-cortex-m-for-beginners-an-overview-of-the-arm-cortex-m-processor-family-and-comparison">White Paper: Cortex-M for Beginners</a></li>
     <li><a href="https://community.arm.com/processors/b/blog/posts/getting-started-with-arm-microcontroller-resources">Getting started with Arm Microcontroller Resources</a></li>
     <li><a href="https://gnu-mcu-eclipse.github.io/">GNU MCU Eclipse</a></li>
